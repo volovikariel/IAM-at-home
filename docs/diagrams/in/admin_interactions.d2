@@ -1,0 +1,16 @@
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+
+Backend Admin: {
+  force logout user: {
+    shape: sequence_diagram
+    a: Admin
+    a.shape: Person
+    los: Logout Service
+    a -> los: 'logout(username)'
+    los -> u: '{err: Err | nil}'
+  }
+}

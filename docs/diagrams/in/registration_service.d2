@@ -1,0 +1,42 @@
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+
+Registration Service: {
+  shape: sequence_diagram
+
+  rs: Registration Service
+
+  regmq: Registration Message Queue
+  regmq.shape: queue
+
+  db: Users Database
+  db.shape: cylinder
+
+  resmq: Response Message Queue
+  resmq.shape: queue
+
+  loop: {
+    'if Registration Service has processing capacity': {
+      # TODO: update when it's known how a service interacts with a queue
+      rs -> regmq: 'pop()'
+      regmq -> rs: '{value: register(username,password) | nil}'
+    }
+  }
+  'if value is not nil': {
+    rs -> rs: 'verifyUsernameValidity(username)'
+    'If invalid username': {
+      rs -> resmq: '{err: Err}'
+    }
+    rs -> rs: 'verifyPasswordValidity(password)'
+    'If invalid password': {
+      rs -> resmq: '{err: Err}'
+    }
+    rs -> db: 'createUser(username,reinforce(password))'
+    db."a reinforced password has been hashed and salted"
+    db -> rs: '{err: Err | nil}'
+    rs -> resmq: '{err: Err | nil}'
+  }
+}

@@ -1,0 +1,66 @@
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+
+# TODO:
+# Add firewalls (e.g: rate limiting)
+# Add (nearly) all requests to queues
+# Route (nearly) all requests through the authorization service
+
+User Interactions: {
+  registering: {
+    shape: sequence_diagram
+
+    u: User
+    u.shape: person
+
+    mb: Message Broker
+
+    regmq: Registration Message Queue
+    regmq.shape: queue
+
+    resn: Response Notifier
+
+    resq: Response Message Queue
+    resq.shape: queue
+
+    u -> mb: 'register(username,password)'
+    mb -> regmq: 'put(register(username,password))'
+    'loop': {
+      resn -> resq: 'pop()'
+      resq -> resn: '{value: {err: Err | nil} | nil}'
+      'if value is not nil': {
+        resn -> u: value
+      }
+    }
+  }
+
+  logging in: {
+    shape: sequence_diagram
+    u: User
+    u.shape: Person
+    ls: Login Service
+    u -> ls: 'login(username,password)'
+    ls -> u: '{err: Err | nil, sessionToken: ... | nil}'
+  }
+
+  logging out: {
+    shape: sequence_diagram
+    u: User
+    u.shape: Person
+    los: Logout Service
+    u -> los: 'logout(username)'
+    los -> u: '{err: Err | nil}'
+  }
+
+  requesting a resource: {
+    shape: sequence_diagram
+    u: User
+    u.shape: Person
+    as: Authorization Service
+    u -> as: 'request(endpoint)'
+  }
+}
+
