@@ -2,7 +2,7 @@
 
 # Application
 ## Interactions
-![User interactions](diagrams/out/user_interactions.svg)
-![Admin interactions](diagrams/out/admin_interactions.svg)
+![User interactions](diagrams/output/user_interactions.svg)
+![Admin interactions](diagrams/output/admin_interactions.svg)
 ## Services
-![Registration service](diagrams/out/registration_service.svg)
+![Registration service](diagrams/output/registration_service.svg)
