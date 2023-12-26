@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// TODO: Maybe add "location" in the handler (for future testing)
 type UserHandler struct {
 	Store UserStore
 }
@@ -15,6 +16,7 @@ func (u *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		u.CreateUser(w, r)
+		return
 	default:
 		http.Error(w, fmt.Sprintf("Unsupported method: %s", r.Method), http.StatusMethodNotAllowed)
 		return
