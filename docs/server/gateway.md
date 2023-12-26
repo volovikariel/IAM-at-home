@@ -19,15 +19,31 @@
             <td>POST</td>
             <td>Creating a user</td>
             <td>application/json</td>
-            <td>{username: ..., password: ...}</td>
+            <td>{username: foo, password: ...}</td>
             <td>
-                <ul>
-                    <li>201 Created</li>
-                    <li>409 Conflict</li>
-                    <li>400 Bad Request</li>
-                    <li>415 Unsupported Media Type</li>
-                    <li>422 Unprocessable Entity</li>
-                </ul> 
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Response Status</th>
+                            <th>Response Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>201 Created</td>
+                            <td>
+                            {
+                                "username": foo,
+                                "_rel": {
+                                    "self": "/v1/users/foo"
+                                }
+                            }</td>
+                        </tr>
+                        <tr><td>409 Conflict</td><td></td></tr>
+                        <tr><td>400 Bad Request</td><td></td></tr>
+                        <tr><td>415 Unsupported Media Type</td><td></td></tr>
+                        <tr><td>422 Unprocessable Entity</td><td></td></tr>
+                </table>
             </td>
         </tr>
         <tr>
@@ -37,10 +53,27 @@
             <td></td>
             <td></td>
             <td>
-                <ul>
-                    <li>200 OK</li>
-                    <li>406 Not Acceptable</li>
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Response Status</th>
+                            <th>Response Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>200 OK</td>
+                            <td>
+                            {
+                                "username": foo,
+                                "_rel": {
+                                    "self": "/v1/users/foo",
+                                    "session": "/v1/users/sessions/foo"
+                                }
+                            }</td>
+                        </tr>
+                        <tr><td>406 Not Acceptable</td><td></td></tr>
+                </table>
             </td>
         </tr>
         <tr>
@@ -50,14 +83,30 @@
             <td>application/json</td>
             <td>{password: ..., session-token: ...}</td>
             <td>
-                <ul>
-                    <li style="color: yellow;">204 No Content</li>
-                    <li>401 Unauthorized</li>
-                    <li>403 Forbidden</li>
-                    <li>400 Bad Request</li>
-                    <li>415 Unsupported Media Type</li>
-                    <li>422 Unprocessable Entity</li>
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Response Status</th>
+                            <th>Response Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>200 OK</td>
+                            <td>
+                            {
+                                "username": foo,
+                                "_rel": {
+                                    "self": "/v1/users/foo"
+                                }
+                            }</td>
+                        </tr>
+                        <tr><td>401 Unauthorized</td><td></td></tr>
+                        <tr><td>403 Forbidden</td><td></td></tr>
+                        <tr><td>400 Bad Request</td><td></td></tr>
+                        <tr><td>415 Unsupported Media Type</td><td></td></tr>
+                        <tr><td>422 Unprocessable Entity</td><td></td></tr>
+                </table>
             </td>
         </tr>
         <tr>
@@ -67,14 +116,21 @@
             <td>application/json</td>
             <td>{session-token: ...}</td>
             <td>
-                <ul>
-                    <li>204 No Content</li>
-                    <li>401 Unauthorized</li>
-                    <li>403 Forbidden</li>
-                    <li>400 Bad Request</li>
-                    <li>415 Unsupported Media Type</li>
-                    <li>422 Unprocessable Entity</li>
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Response Status</th>
+                            <th>Response Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>204 No Content</td><td></td></tr>
+                        <tr><td>401 Unauthorized</td><td></td></tr>
+                        <tr><td>403 Forbidden</td><td></td></tr>
+                        <tr><td>400 Bad Request</td><td></td></tr>
+                        <tr><td>415 Unsupported Media Type</td><td></td></tr>
+                        <tr><td>422 Unprocessable Entity</td><td></td></tr>
+                </table>
             </td>
         </tr>
         <tr>
@@ -84,13 +140,29 @@
             <td>application/json</td>
             <td>{username: ..., password: ...}</td>
             <td>
-                <ul>
-                    <li>201 Created</li>
-                    <li>401 Unauthorized</li>
-                    <li>400 Bad Request</li>
-                    <li>415 Unsupported Media Type</li>
-                    <li>422 Unprocessable Entity</li>
-                </ul> 
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Response Status</th>
+                            <th>Response Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>201 Created</td>
+                            <td>
+                            {
+                                "session-token": foo,
+                                "_rel": {
+                                    "self": "/v1/users/sessions/foo"
+                                }
+                            }</td>
+                        </tr>
+                        <tr><td>401 Unauthorized</td><td></td></tr>
+                        <tr><td>400 Bad Request</td><td></td></tr>
+                        <tr><td>415 Unsupported Media Type</td><td></td></tr>
+                        <tr><td>422 Unprocessable Entity</td><td></td></tr>
+                </table>
             </td>
         </tr>
         <tr>
@@ -100,13 +172,20 @@
             <td>application/json</td>
             <td>{session-token: ...}</td>
             <td>
-                <ul>
-                    <li>204 No Content</li>
-                    <li>401 Unauthorized</li>
-                    <li>400 Bad Request</li>
-                    <li>415 Unsupported Media Type</li>
-                    <li>422 Unprocessable Entity</li>
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Response Status</th>
+                            <th>Response Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>204 No Content</td><td></td></tr>
+                        <tr><td>401 Unauthorized</td><td></td></tr>
+                        <tr><td>400 Bad Request</td><td></td></tr>
+                        <tr><td>415 Unsupported Media Type</td><td></td></tr>
+                        <tr><td>422 Unprocessable Entity</td><td></td></tr>
+                </table>
             </td>
         </tr>
         <tr>
@@ -116,140 +195,17 @@
             <td></td>
             <td></td>
             <td>
-                <ul>
-                    <li>404 Not found</li>
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Response Status</th>
+                            <th>Response Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>404 Not Found</td><td></td></tr>
+                </table>
             </td>
         </tr>
     </tbody>
 </table>
-
-#### Text version
-
-### Registering
-#### Endpoint: /v1/users
-
-##### Method: POST
-
-Purpose: Creating a user
-
-Content-Type: application/json
-
-Example: {username: ..., password: ...}
-
-Responses:
-
-201 Created
-
-409 Conflict
-
-400 Bad Request
-
-415 Unsupported Media Type
-
-422 Unprocessable Entity
-
-### Endpoint: /v1/users/{username}
-#### Method: GET
-
-Purpose: get user
-
-Content-Type: application/json
-
-Responses:
-
-200 OK
-
-406 Not Acceptable
-
-#### Method: PATCH 
-
-Purpose: update user
-
-Content-Type: application/json
-
-Example: {password: ..., session-token: ...}
-
-Responses:
-
-204 No Content
-
-401 Unauthorized
-
-403 Forbidden
-
-400 Bad Request
-
-415 Unsupported Media Type
-
-422 Unprocessable Entity
-
-
-##### Method: DELETE
-
-Purpose: delete user
-
-Content-Type: application/json
-
-Example: {session-token: ...}
-
-Responses:
-
-204 No Content
-
-401 Unauthorized
-
-403 Forbidden
-
-400 Bad Request
-
-415 Unsupported Media Type
-
-422 Unprocessable Entity
-
-### Logging in/out & authenticating
-#### Endpoint: /v1/users/sessions
-
-##### Method: POST
-
-Purpose: create session
-
-Content-Type: application/json
-
-Example: {username: ..., password: ...}
-
-Responses:
-201 Created
-
-401 Unauthorized
-
-400 Bad Request
-
-415 Unsupported Media Type
-
-422 Unprocessable Entity
-
-
-#### Endpoint: /v1/users/sessions/{username}
-
-##### Method: DELETE
-
-Purpose: terminate session
-
-Content-Type: application/json
-
-Example: {session-token: ...}
-
-Responses:
-
-204 No Content
-
-401 Unauthorized
-
-400 Bad Request
-
-415 Unsupported Media Type
-
-422 Unprocessable Entity
-
-All non-specified URIs return a 404 Not Found.
