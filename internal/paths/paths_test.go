@@ -1,4 +1,4 @@
-package main
+package paths
 
 import (
 	"reflect"
@@ -56,7 +56,7 @@ func TestGetInputPaths(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := getInputPaths(infs, tc.recurse)
+			got := GetInputPaths(infs, ".d2", tc.recurse)
 			if !reflect.DeepEqual(tc.expected, got) {
 				t.Errorf("\nWant:\n%q\nGot:\n%q\n", tc.expected, got)
 			}

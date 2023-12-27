@@ -3,6 +3,7 @@ package sessions
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/volovikariel/IdentityManager/cmd/server/gateway/internal/users"
@@ -14,7 +15,7 @@ type SessionHandler struct {
 }
 
 func (s *SessionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint Hit: Sessions")
+	log.Println("Endpoint Hit: Sessions")
 	switch r.Method {
 	case http.MethodPost:
 		s.CreateSession(w, r)
@@ -41,7 +42,7 @@ func (s *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Creating session for user %q\n", session.Username)
+	log.Printf("Creating session for user %q\n", session.Username)
 	s.sessionStore.Add(session.Username, session.Token)
 	// Token should be some unique value
 	token := "1"

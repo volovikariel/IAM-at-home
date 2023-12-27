@@ -3,6 +3,7 @@ package users
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -12,7 +13,7 @@ type UserHandler struct {
 }
 
 func (u *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint Hit: Users")
+	log.Println("Endpoint Hit: Users")
 	switch r.Method {
 	case http.MethodPost:
 		u.CreateUser(w, r)

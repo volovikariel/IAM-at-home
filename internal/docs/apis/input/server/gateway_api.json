@@ -1,0 +1,46 @@
+[
+    {
+        "path": "/v1/users",
+        "method": "POST",
+        "description": "Creating a new user",
+        "requests": [
+            {
+                "contentType": "application/json",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "type": "string",
+                        "value": "foo"
+                    },
+                    {
+                        "name": "password",
+                        "type": "string",
+                        "value": "..."
+                    }
+                ]
+            }
+        ],
+        "responses": [
+            {
+                "status": "201 Created",
+                "body": "{ \"username\": \"foo\", \"_rel\": { \"self\": \"/v1/users/foo\" } }"
+            },
+            {
+                "status": "400 Bad Request",
+                "body": ""
+            },
+            {
+                "status": "409 Conflict",
+                "body": ""
+            },
+            {
+                "status": "415 Unsupported Media Type",
+                "body": ""
+            },
+            {
+                "status": "422 Unprocessable Entity",
+                "body": ""
+            }
+        ]
+    }
+]

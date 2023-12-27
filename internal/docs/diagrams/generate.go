@@ -3,52 +3,21 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/fs"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
-)
 
-func isFlagPassed(name string) bool {
-	found := false
-	flag.Visit(func(f *flag.Flag) {
-		if f.Name == name {
-			found = true
-		}
-	})
-	return found
-}
+	"github.com/volovikariel/IdentityManager/internal/cli"
+	"github.com/volovikariel/IdentityManager/internal/paths"
+)
 
 func convertToOutputPath(inputPath string) string {
 	base := filepath.Base(inputPath)
 	filename := strings.TrimSuffix(base, filepath.Ext(base))
 	return fmt.Sprintf("%s.svg", filename)
-}
-
-func getInputPaths(infs fs.FS, recurse bool) []string {
-	var inputPaths []string
-	err := fs.WalkDir(infs, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if !d.IsDir() && filepath.Ext(path) == ".d2" {
-			inputPaths = append(inputPaths, path)
-		}
-
-		// We skip all directories that aren't at the root of the specified FS.
-		// In other words, we only want to skip subdirectories.
-		if !recurse && d.IsDir() && path != "." {
-			return fs.SkipDir
-		}
-		return nil
-	})
-	if err != nil {
-		log.Println("Error while walking input directory:", err)
-	}
-	return inputPaths
 }
 func generateDiagram(inputPath, outputPath string) {
 	cmd := exec.Command("d2", inputPath, outputPath)
@@ -67,9 +36,10 @@ func main() {
 	}
 
 	_, filename, _, _ := runtime.Caller(0)
-	diagramsDir := filepath.Dir(filename)
-	defaultInputPathDir := filepath.Join(diagramsDir, "input")
-	defaultOutputPathDir := filepath.Join(diagramsDir, "output")
+	internalDiagramsDir := filepath.Dir(filename)
+
+	defaultInputPathDir := filepath.Join(internalDiagramsDir, "input")
+	defaultOutputPathDir := filepath.Join(internalDiagramsDir, "../../../docs/diagrams")
 	recursiveDefault := false
 
 	var inputPathDir string
@@ -86,19 +56,19 @@ func main() {
 	// If we passed in input or output flags, make them relative to the directory from which the go run command was run.
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Println("Error while getting current working directory:", err)
+		log.Fatalln("Error while getting current working directory:", err)
 	}
-	if isFlagPassed("i") {
+	if cli.IsFlagPassed("i") {
 		inputPathDir = filepath.Join(cwd, inputPathDir)
 	}
-	if isFlagPassed("o") {
+	if cli.IsFlagPassed("o") {
 		outputPathDir = filepath.Join(cwd, outputPathDir)
 	}
 
-	inputPaths := getInputPaths(os.DirFS(inputPathDir), recursive)
+	inputPaths := paths.GetInputPaths(os.DirFS(inputPathDir), ".d2", recursive)
 	for _, inputPath := range inputPaths {
 		fullInputPath := filepath.Join(inputPathDir, inputPath)
-		fullOutputPath := filepath.Join(outputPathDir, convertToOutputPath(inputPath))
+		fullOutputPath := filepath.Join(outputPathDir, paths.ReplaceExtension(inputPath, ".svg"))
 		generateDiagram(fullInputPath, fullOutputPath)
 	}
 }
