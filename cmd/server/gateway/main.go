@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/volovikariel/IdentityManager/cmd/server/gateway/internal/sessions"
-	"github.com/volovikariel/IdentityManager/cmd/server/gateway/internal/users"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/sessions"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/users"
 )
 
 type inMemoryUserStore struct {
