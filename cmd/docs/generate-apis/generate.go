@@ -154,7 +154,7 @@ func main() {
 	config := parseFlags()
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Println("Error while getting current working directory:", err)
+		log.Fatalln("Error while getting current working directory:", err)
 	}
 	// If we passed in a input or output path, make it relative to the dir from which the command was run
 	config.InputPathDir = filepath.Join(cwd, config.InputPathDir)
