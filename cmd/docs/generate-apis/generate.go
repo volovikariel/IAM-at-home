@@ -8,11 +8,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"sync"
 
-	"github.com/volovikariel/IdentityManager/internal/cli"
 	"github.com/volovikariel/IdentityManager/internal/paths"
 )
 
@@ -87,28 +85,23 @@ type Config struct {
 }
 
 func parseFlags() Config {
-	_, currentFile, _, _ := runtime.Caller(0)
-	internalApisDir := filepath.Dir(currentFile)
-
-	defaultInputPathDir := filepath.Join(internalApisDir, "input")
-	defaultOutputPathDir := filepath.Join(internalApisDir, "../../../docs/apis")
-	recursiveDefault := false
-
 	var inputPathDir string
 	var outputPathDir string
 	var recursive bool
-	flag.StringVar(&inputPathDir, "i", defaultInputPathDir, "Path containing .json files to be converted to .md")
-	flag.StringVar(&outputPathDir, "o", defaultOutputPathDir, "Path in which .md files will be put")
-	flag.BoolVar(&recursive, "r", recursiveDefault, "Should recursively walk subdirs")
+	flag.StringVar(&inputPathDir, "i", "", "Path containing .json files to be converted to .md")
+	flag.StringVar(&outputPathDir, "o", "", "Path in which .md files will be put")
+	flag.BoolVar(&recursive, "r", false, "Should recursively walk subdirs")
 	flag.Parse()
 	if !flag.Parsed() {
 		log.Fatal("Failed to parse flags")
 	}
+	if inputPathDir == "" {
+		log.Fatal("No input path specified")
+	}
+	if outputPathDir == "" {
+		log.Fatal("No output path specified")
+	}
 	return Config{inputPathDir, outputPathDir, recursive}
-}
-
-func makeRelative(dir1 string, dir2 string) string {
-	return filepath.Join(dir1, dir2)
 }
 
 func processFiles(inputPaths []string, config Config) {
@@ -164,13 +157,8 @@ func main() {
 		log.Println("Error while getting current working directory:", err)
 	}
 	// If we passed in a input or output path, make it relative to the dir from which the command was run
-	if cli.IsFlagPassed("i") {
-		fmt.Println(cwd, config.InputPathDir)
-		config.InputPathDir = makeRelative(cwd, config.InputPathDir)
-	}
-	if cli.IsFlagPassed("o") {
-		config.OutputPathDir = makeRelative(cwd, config.OutputPathDir)
-	}
+	config.InputPathDir = filepath.Join(cwd, config.InputPathDir)
+	config.OutputPathDir = filepath.Join(cwd, config.OutputPathDir)
 	inputPaths := paths.GetInputPaths(os.DirFS(config.InputPathDir), ".json", config.Recursive)
 	processFiles(inputPaths, config)
 }
