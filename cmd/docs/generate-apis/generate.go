@@ -156,7 +156,6 @@ func main() {
 	if err != nil {
 		log.Fatalln("Error while getting current working directory:", err)
 	}
-	// If we passed in a input or output path, make it relative to the dir from which the command was run
 	config.InputPathDir = filepath.Join(cwd, config.InputPathDir)
 	config.OutputPathDir = filepath.Join(cwd, config.OutputPathDir)
 	inputPaths := paths.GetInputPaths(os.DirFS(config.InputPathDir), ".json", config.Recursive)
