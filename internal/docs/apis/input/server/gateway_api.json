@@ -1,46 +1,248 @@
-[
-    {
-        "path": "/v1/users",
-        "method": "POST",
-        "description": "Creating a new user",
-        "requests": [
-            {
-                "contentType": "application/json",
-                "parameters": [
-                    {
-                        "name": "username",
-                        "type": "string",
-                        "value": "foo"
-                    },
-                    {
-                        "name": "password",
-                        "type": "string",
-                        "value": "..."
-                    }
-                ]
-            }
-        ],
-        "responses": [
-            {
-                "status": "201 Created",
-                "body": "{ \"username\": \"foo\", \"_rel\": { \"self\": \"/v1/users/foo\" } }"
-            },
-            {
-                "status": "400 Bad Request",
-                "body": ""
-            },
-            {
-                "status": "409 Conflict",
-                "body": ""
-            },
-            {
-                "status": "415 Unsupported Media Type",
-                "body": ""
-            },
-            {
-                "status": "422 Unprocessable Entity",
-                "body": ""
-            }
-        ]
-    }
-]
+{
+    "name": "Gateway API",
+    "endpoints": [
+        {
+            "path": "/v1/users",
+            "method": "POST",
+            "description": "Creates a new user",
+            "requests": [
+                {
+                    "contentType": "application/json",
+                    "parameters": [
+                        {
+                            "name": "username",
+                            "type": "string",
+                            "value": "foo"
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "value": "..."
+                        }
+                    ]
+                }
+            ],
+            "responses": [
+                {
+                    "status": "201 Created",
+                    "body": "{ \"username\": \"foo\", \"_rel\": { \"self\": \"/v1/users/foo\" } }"
+                },
+                {
+                    "status": "400 Bad Request",
+                    "body": ""
+                },
+                {
+                    "status": "409 Conflict",
+                    "body": ""
+                },
+                {
+                    "status": "415 Unsupported Media Type",
+                    "body": ""
+                },
+                {
+                    "status": "422 Unprocessable Entity",
+                    "body": ""
+                }
+            ]
+        },
+        {
+            "path": "/v1/users/{username}",
+            "method": "GET",
+            "description": "Gets user info",
+            "responses": [
+                {
+                    "status": "200 OK",
+                    "body": "{ \"username\": \"foo\", \"_rel\": { \"self\": \"/v1/users/foo\", \"session\": \"/v1/users/sessions/foo\" } }"
+                },
+                {
+                    "status": "406 Not Acceptable",
+                    "body": ""
+                }
+            ]
+        },
+        {
+            "path": "/v1/users/{username}",
+            "method": "PATCH",
+            "description": "Updates user",
+            "requests": [
+                {
+                    "contentType": "application/json",
+                    "parameters": [
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "value": "..."
+                        },
+                        {
+                            "name": "session-token",
+                            "type": "string",
+                            "value": "..."
+                        }
+                    ]
+                }
+            ],
+            "responses": [
+                {
+                    "status": "200 OK",
+                    "body": "{ \"username\": \"foo\", \"_rel\": { \"self\": \"/v1/users/foo\" } }"
+                },
+                {
+                    "status": "400 Bad Request",
+                    "body": ""
+                },
+                {
+                    "status": "401 Unauthorized",
+                    "body": ""
+                },
+                {
+                    "status": "403 Forbidden",
+                    "body": ""
+                },
+                {
+                    "status": "415 Unsupported Media Type",
+                    "body": ""
+                },
+                {
+                    "status": "422 Unprocessable Entity",
+                    "body": ""
+                }
+            ]
+        },
+        {
+            "path": "/v1/users/{username}",
+            "method": "DELETE",
+            "description": "Deletes a user",
+            "requests": [
+                {
+                    "contentType": "application/json",
+                    "parameters": [
+                        {
+                            "name": "session-token",
+                            "type": "string",
+                            "value": "..."
+                        }
+                    ]
+                }
+            ],
+            "responses": [
+                {
+                    "status": "204 No Content",
+                    "body": ""
+                },
+                {
+                    "status": "401 Unauthorized",
+                    "body": ""
+                },
+                {
+                    "status": "403 Forbidden",
+                    "body": ""
+                },
+                {
+                    "status": "400 Bad Request",
+                    "body": ""
+                },
+                {
+                    "status": "415 Unsupported Media Type",
+                    "body": ""
+                },
+                {
+                    "status": "422 Unprocessable Entity",
+                    "body": ""
+                }
+            ]
+        },
+        {
+            "path": "/v1/users/sessions",
+            "method": "POST",
+            "description": "Starts a user session",
+            "requests": [
+                {
+                    "contentType": "application/json",
+                    "parameters": [
+                        {
+                            "name": "username",
+                            "type": "string",
+                            "value": "..."
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "value": "..."
+                        }
+                    ]
+                }
+            ],
+            "responses": [
+                {
+                    "status": "201 Created",
+                    "body": "{ \"session-token\": \"foo\", \"_rel\": { \"self\": \"/v1/users/sessions/foo\" } }"
+                },
+                {
+                    "status": "400 Bad Request",
+                    "body": ""
+                },
+                {
+                    "status": "401 Unauthorized",
+                    "body": ""
+                },
+                {
+                    "status": "415 Unsupported Media Type",
+                    "body": ""
+                },
+                {
+                    "status": "422 Unprocessable Entity",
+                    "body": ""
+                }
+            ]
+        },
+        {
+            "path": "/v1/users/sessions/{username}",
+            "method": "DELETE",
+            "description": "Terminates session",
+            "requests": [
+                {
+                    "contentType": "application/json",
+                    "parameters": [
+                        {
+                            "name": "session-token",
+                            "type": "string",
+                            "value": "..."
+                        }
+                    ]
+                }
+            ],
+            "responses": [
+                {
+                    "status": "204 No Content",
+                    "body": ""
+                },
+                {
+                    "status": "400 Bad Request",
+                    "body": ""
+                },
+                {
+                    "status": "401 Unauthorized",
+                    "body": ""
+                },
+                {
+                    "status": "415 Unsupported Media Type",
+                    "body": ""
+                },
+                {
+                    "status": "422 Unprocessable Entity",
+                    "body": ""
+                }
+            ]
+        },
+        {
+            "path": "other",
+            "description": "Whenever the path does not have a resource associated with it, or when the method does not have a resource associated with it (e.g: user not found), or when the uri is just flatout wrong",
+            "responses": [
+                {
+                    "status": "404 Not Found",
+                    "body": ""
+                }
+            ]
+        }
+    ]
+}
