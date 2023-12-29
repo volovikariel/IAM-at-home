@@ -9,4 +9,4 @@
 
 # APIs
 ## Gateway Server
-[Gateway Server](apis/server/gateway_api.md)
+[Gateway Server](apis/server/gateway_api.html)
