@@ -9,4 +9,4 @@
 
 # APIs
 ## Gateway Server
-[Gateway Server](apis/server/gateway_api.html)
+[Gateway Server](https://volovikariel.github.io/IdentityManager/apis/server/gateway_api.html)
