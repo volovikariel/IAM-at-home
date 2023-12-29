@@ -1,7 +1,29 @@
-openapi: 3.0.0
+openapi: 3.1.0
 info:
   title: Gateway API
-  version: 1.0.0
+  version: 0.0.0
+servers:
+  - url: http://{url}:{port}/
+    description: Gateway API's URL
+    variables:
+      url:
+        default: localhost
+        description: Gateway API's URL
+      port:
+        # This should reference a config file (which the server's go code should also reference)
+        default: 10000
+components:
+  responses:
+    BadRequest:
+        description: Bad Request
+    Unauthorized:
+        description: Unauthorized
+    Forbidden:
+        description: Forbidden
+    UnsupportedMediaType:
+        description: Unsupported Media Type
+    UnprocessableEntity:
+        description: Unprocessable Entity
 paths:
   /v1/users:
     post:
@@ -17,6 +39,7 @@ paths:
                   type: string
                 password:
                   type: string
+                  format: password
       responses:
         '201':
           description: Created
@@ -34,13 +57,13 @@ paths:
                         type: string
                         example: '/v1/users/foo'
         '400':
-          description: Bad Request
+          $ref: '#/components/responses/BadRequest' 
         '409':
-          description: Conflict
+          $ref: '#/components/responses/Conflict'
         '415':
-          description: Unsupported Media Type
+          $ref: '#/components/responses/UnsupportedMediaType'
         '422':
-          description: Unprocessable Entity
+          $ref: '#/components/responses/UnprocessableEntity'
 
   /v1/users/{username}:
     get:
@@ -71,10 +94,10 @@ paths:
                         type: string
                         example: '/v1/users/sessions/foo'
         '406':
-          description: Not Acceptable
+          $ref: '#/components/responses/NotAcceptable'
 
     patch:
-      summary: Updates user
+      summary: Updates a user
       parameters:
         - name: username
           in: path
@@ -90,6 +113,7 @@ paths:
               properties:
                 password:
                   type: string
+                  format: password
                 session-token:
                   type: string
       responses:
@@ -109,15 +133,15 @@ paths:
                         type: string
                         example: '/v1/users/foo'
         '400':
-          description: Bad Request
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          description: Forbidden
+          $ref: '#/components/responses/Forbidden'
         '415':
-          description: Unsupported Media Type
+          $ref: '#/components/responses/UnsupportedMediaType'
         '422':
-          description: Unprocessable Entity
+          $ref: '#/components/responses/UnprocessableEntity'
 
     delete:
       summary: Deletes a user
@@ -138,17 +162,17 @@ paths:
                   type: string
       responses:
         '204':
-          description: No Content
+          $ref: '#/components/responses/NoContent'
         '400':
-          description: Bad Request
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          description: Forbidden
+          $ref: '#/components/responses/Forbidden'
         '415':
-          description: Unsupported Media Type
+          $ref: '#/components/responses/UnsupportedMediaType'
         '422':
-          description: Unprocessable Entity
+          $ref: '#/components/responses/UnprocessableEntity'
 
   /v1/users/sessions:
     post:
@@ -164,6 +188,7 @@ paths:
                   type: string
                 password:
                   type: string
+                  format: password
       responses:
         '201':
           description: Created
@@ -176,6 +201,10 @@ paths:
                     type: string
                   rel:
                     type: object
+                    properties:
+                      self:
+                        type: string
+                        example: '/v1/users/sessions/foo'
     delete:
       summary: Terminates session
       parameters:
@@ -193,10 +222,10 @@ paths:
         '204':
           description: No Content
         '400':
-          description: Bad Request
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
+          $ref: '#/components/responses/Unauthorized'
         '415':
-          description: Unsupported Media Type
+          $ref: '#/components/responses/UnsupportedMediaType'
         '422':
-          description: Unprocessable Entity
+          $ref: '#/components/responses/UnprocessableEntity'
