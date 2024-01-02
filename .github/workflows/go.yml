@@ -43,4 +43,4 @@ jobs:
         run: curl -fsSL https://quobix.com/scripts/install_vacuum.sh | sh
       - name: Lint OpenAPI schema
         run: |
-          find ./internal/docs/apis/ -name "*.yaml" | xargs vacuum lint -e -d -b -r ./internal/docs/apis/vacuum-ruleset.yaml
+          find ./internal/docs/apis/input/ -name "*.yaml" | xargs vacuum lint -r ./internal/docs/apis/vacuum-ruleset.yaml -e -d -b 

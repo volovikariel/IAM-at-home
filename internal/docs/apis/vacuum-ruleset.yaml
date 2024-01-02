@@ -1,4 +1,4 @@
-description: Recommended rules for a high quality specification.
+description: Slightly modified version of the recommended rules.
 documentationUrl: https://quobix.com/vacuum/rulesets/recommended
 rules:
     component-description:
