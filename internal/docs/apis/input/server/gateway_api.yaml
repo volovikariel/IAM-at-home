@@ -3,54 +3,107 @@ info:
   title: Gateway API
   description: Gateway API which client applications access, and which places the requests on Queues to be consumed by other services 
   version: 0.0.0
+tags:
+  - name: Users
+    description: Operations to manage users.
+  - name: Sessions
+    description: Operations to manage user sessions.
 servers:
-  - url: http://{url}:{port}/
-    description: Gateway API's URL
+  - url: http://{host}:{port}/
+    description: Gateway API's base URL
     variables:
-      url:
+      host:
         default: localhost
-        description: localhost by default for testing
+        description: Localhost by default for testing.
       port:
-        # This should reference a config file (which the server's go code should also reference)
+        # TODO: This should reference a config file (which the server's go code should also reference)
         default: '10000'
+        description: The port on which the servers runs, defaults to 10000.
 components:
+  schemas:
+    Username:
+      description: User's username.
+      type: string
+      # TODO: This should reference a config file (which the server's go code should also reference)
+      minLength: 3
+      maxLength: 20
+      example: foo
+    Password:
+      description: User's password.
+      type: string
+      format: password
+      # TODO: This should reference a config file (which the server's go code should also reference)
+      minLength: 8
+      maxLength: 256
+      example: bar45678
+    SessionToken:
+      description: User's session-token.
+      type: string
+      example: abcd1234
+    UsernameAndPassword:
+      description: User's username and password.
+      type: object
+      properties:
+        username:
+          $ref: '#/components/schemas/Username'
+        password: 
+          $ref: '#/components/schemas/Password'
+      required:
+       - username
+       - password
+      example: {"username": "foo", "password": "bar45678"}
+  parameters:
+    Username:
+      name: username
+      description: '#/components/schemas/Username/description'
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Username'
+      example: foo
+    SessionToken:
+        in: header
+        name: session-token
+        description: '#/components/schemas/Session-token/description'
+        required: true
+        schema:
+          $ref: '#/components/schemas/SessionToken'
+        example: 'abcd1234'
   responses:
     Conflict:
-        description: Conflict
+        description: Conflict.
     NoContent:
-        description: No Content
+        description: No Content.
     NotAcceptable:
-        description: Not Acceptable
+        description: Not Acceptable.
     BadRequest:
-        description: Bad Request
+        description: Bad Request.
     Unauthorized:
-        description: Unauthorized
+        description: Unauthorized.
     Forbidden:
-        description: Forbidden
+        description: Forbidden.
     UnsupportedMediaType:
-        description: Unsupported Media Type
+        description: Unsupported Media Type.
     UnprocessableEntity:
-        description: Unprocessable Entity
+        description: Unprocessable Entity.
+    
 paths:
   /v1/users:
     post:
       summary: Creates a new user
       operationId: createUser
+      tags:
+        - Users
       requestBody:
+        description: Request body containing user's username and password.
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                  format: password
+              $ref: '#/components/schemas/UsernameAndPassword'
       responses:
         '201':
-          description: Created
+          description: User created successfully.
           content:
             application/json:
               schema:
@@ -64,6 +117,7 @@ paths:
                       self:
                         type: string
                         example: '/v1/users/foo'
+              example: {"username": "foo", "rel": {"self": "/v1/users/foo"}}
         '400':
           $ref: '#/components/responses/BadRequest' 
         '409':
@@ -77,15 +131,13 @@ paths:
     get:
       summary: Gets user info
       operationId: getUser
+      tags:
+        - Users
       parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/Username'
       responses:
         '200':
-          description: OK
+          description: OK.
           content:
             application/json:
               schema:
@@ -102,20 +154,20 @@ paths:
                       session:
                         type: string
                         example: '/v1/users/sessions/foo'
+              example: {"username": "foo", "rel": {"self": "/v1/users/foo", "session": "/v1/users/sessions/foo"}}
         '406':
           $ref: '#/components/responses/NotAcceptable'
 
     patch:
       summary: Updates a user
       operationId: updateUser
+      tags:
+        - Users
       parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/Username'
       requestBody:
         required: true
+        description: User's password and session token.
         content:
           application/json:
             schema:
@@ -126,9 +178,10 @@ paths:
                   format: password
                 session-token:
                   type: string
+            example: {"password": "bar", "session-token": "foo"}
       responses:
         '200':
-          description: OK
+          description: User updated successfully.
           content:
             application/json:
               schema:
@@ -142,6 +195,7 @@ paths:
                       self:
                         type: string
                         example: '/v1/users/foo'
+              example: {"username": "foo", "rel": {"self": "/v1/users/foo"}}
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -156,21 +210,11 @@ paths:
     delete:
       summary: Deletes a user
       operationId: deleteUser
+      tags:
+        - Users
       parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                session-token:
-                  type: string
+        - $ref: '#/components/parameters/Username'
+        - $ref: '#/components/parameters/SessionToken'
       responses:
         '204':
           $ref: '#/components/responses/NoContent'
@@ -189,27 +233,20 @@ paths:
     post:
       summary: Starts a user session
       operationId: createSession
+      tags:
+        - Sessions
       parameters:
-      - name: username
-        in: path
-        required: true
-        schema:
-          type: string
+        - $ref: '#/components/parameters/Username'
       requestBody:
         required: true
+        description: Request body containing user's password.
         content:
-          application/json:
+          text/plain:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                  format: password
+              $ref: '#/components/schemas/Password'
       responses:
         '201':
-          description: Created
+          description: Session created successfully.
           content:
             application/json:
               schema:
@@ -223,23 +260,19 @@ paths:
                       self:
                         type: string
                         example: '/v1/users/sessions/username'
+              example: {"session-token": "abcd1234", "rel": {"self": "/v1/users/sessions/username"}}
+    
     delete:
       summary: Terminates session
       operationId: terminateSession
+      tags:
+        - Sessions
       parameters:
-        - in: path
-          name: username
-          required: true
-          schema:
-            type: string
-        - in: header
-          name: session-token
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/Username'
+        - $ref: '#/components/parameters/SessionToken'
       responses:
         '204':
-          description: No Content
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
