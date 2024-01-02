@@ -79,14 +79,24 @@ components:
     BadRequest:
         description: Bad Request.
     Unauthorized:
-        description: Unauthorized.
+        description: Access token is missing or invalid
+        headers:
+          WWW_Authenticate:
+            schema:
+              type: string
+              example: Bearer charset="UTF-8"
     Forbidden:
         description: Forbidden.
     UnsupportedMediaType:
         description: Unsupported Media Type.
     UnprocessableEntity:
         description: Unprocessable Entity.
-    
+  securitySchemes:
+    bearerAuth:
+      description: Bearer auth.
+      type: http
+      scheme: bearer
+
 paths:
   /v1/users:
     post:
@@ -163,6 +173,8 @@ paths:
       operationId: updateUser
       tags:
         - Users
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/Username'
       requestBody:
@@ -212,6 +224,8 @@ paths:
       operationId: deleteUser
       tags:
         - Users
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/Username'
         - $ref: '#/components/parameters/SessionToken'
@@ -267,6 +281,8 @@ paths:
       operationId: terminateSession
       tags:
         - Sessions
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/Username'
         - $ref: '#/components/parameters/SessionToken'
