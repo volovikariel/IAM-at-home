@@ -1,4 +1,4 @@
-description: Slightly modified version of the recommended rules.
+description: Slightly modified version of the recommended rules (all removals are commented out, all additions are at the end of the file).
 documentationUrl: https://quobix.com/vacuum/rulesets/recommended
 rules:
     component-description:
@@ -642,25 +642,25 @@ rules:
         then:
             function: oasTagDefined
         type: validation
-    # operation-tags:
-    #     category:
-    #         description: Tags are used as meta-data for operations. They are mainly used by tooling as a taxonomy mechanism to build navigation, search and more. Tags are important as they help consumers navigate the contract when using documentation, testing, code generation or analysis tools.
-    #         id: tags
-    #         name: Tags
-    #     description: Operation `tags` are missing/empty
-    #     formats:
-    #         - oas3
-    #         - oas3_1
-    #         - oas2
-    #     given: $
-    #     howToFix: Operations use tags to define the domain(s) they are apart of. Generally a single tag per operation is used, however some tools use multiple tags. The point is that you need tags! Add some tags to the operation that match the globally available ones.
-    #     id: operation-tags
-    #     recommended: true
-    #     resolved: true
-    #     severity: warn
-    #     then:
-    #         function: oasOperationTags
-    #     type: validation
+    operation-tags:
+        category:
+            description: Tags are used as meta-data for operations. They are mainly used by tooling as a taxonomy mechanism to build navigation, search and more. Tags are important as they help consumers navigate the contract when using documentation, testing, code generation or analysis tools.
+            id: tags
+            name: Tags
+        description: Operation `tags` are missing/empty
+        formats:
+            - oas3
+            - oas3_1
+            - oas2
+        given: $
+        howToFix: Operations use tags to define the domain(s) they are apart of. Generally a single tag per operation is used, however some tools use multiple tags. The point is that you need tags! Add some tags to the operation that match the globally available ones.
+        id: operation-tags
+        recommended: true
+        resolved: true
+        severity: warn
+        then:
+            function: oasOperationTags
+        type: validation
     path-declarations-must-exist:
         category:
             description: Operations are the core of the contract, they define paths and HTTP methods. These rules check operations have been well constructed, looks for operationId, parameter, schema and return types in depth.
