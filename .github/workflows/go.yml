@@ -1,28 +1,44 @@
 # This workflow will build a golang project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
+
+# TODO: Add cacheing between jobs
 name: Go
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "test/dockerize-an-api" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21.3'
-
     - name: Build
       run: go build -v ./...
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21.3'
     - name: Test
       run: go test -v ./...
+
+  test_openapi_schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Vacuum
+        run: curl -fsSL https://quobix.com/scripts/install_vacuum.sh | sh
+      - name: Validate OpenAPI schema
+        run: vacuum lint -e -d ./internal/docs/apis/**/*.yaml
