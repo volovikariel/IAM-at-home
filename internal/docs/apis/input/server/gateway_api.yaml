@@ -9,7 +9,7 @@ servers:
     variables:
       url:
         default: localhost
-        description: Gateway API's URL
+        description: localhost by default for testing
       port:
         # This should reference a config file (which the server's go code should also reference)
         default: '10000'
