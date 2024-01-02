@@ -40,7 +40,6 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install OpenAPI linter (Vacuum)
         run: curl -fsSL https://quobix.com/scripts/install_vacuum.sh | sh
-      - name: Enable globstar
-        run: shopt -s globstar
       - name: Lint OpenAPI schema
-        run: vacuum lint -e -d ./internal/docs/apis/**/*.yaml
+        run: |
+          find ./internal/docs/apis/ -name "*.yaml" | xargs vacuum lint -e -d
