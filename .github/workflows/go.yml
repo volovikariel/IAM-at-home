@@ -34,11 +34,13 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-  test_openapi_schema:
+  lint_openapi_schema:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install Vacuum
+      - name: Install OpenAPI linter (Vacuum)
         run: curl -fsSL https://quobix.com/scripts/install_vacuum.sh | sh
-      - name: Validate OpenAPI schema
+      - name: Enable globstar
+        run: shopt -s globstar
+      - name: Lint OpenAPI schema
         run: vacuum lint -e -d ./internal/docs/apis/**/*.yaml
