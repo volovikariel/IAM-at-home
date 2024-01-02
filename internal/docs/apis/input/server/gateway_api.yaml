@@ -79,7 +79,7 @@ components:
     BadRequest:
         description: Bad Request.
     Unauthorized:
-        description: Access token is missing or invalid
+        description: Access token is missing or invalid.
         headers:
           WWW_Authenticate:
             schema:
