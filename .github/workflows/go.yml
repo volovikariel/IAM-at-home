@@ -3,6 +3,7 @@
 
 
 # TODO: Add cacheing between jobs
+# TODO: Make sure that the generated API docs and diagrams are up to date
 name: Go
 
 on:
