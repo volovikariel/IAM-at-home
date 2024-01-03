@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -34,4 +35,10 @@ func GetInputPaths(infs fs.FS, fileExtension string, recurse bool) []string {
 func ReplaceExtension(inputPath string, extension string) string {
 	filePath := strings.TrimSuffix(inputPath, filepath.Ext(inputPath))
 	return fmt.Sprintf("%s%s", filePath, extension)
+}
+
+func GetCurrFile() string {
+	// As this function is only to be called from *other* files, we skip 1 frame
+	_, currFilename, _, _ := runtime.Caller(1)
+	return currFilename
 }
