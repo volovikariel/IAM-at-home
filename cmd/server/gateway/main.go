@@ -4,10 +4,17 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path"
+	"path/filepath"
 
+	"github.com/joho/godotenv"
+	"github.com/volovikariel/IdentityManager/internal/paths"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/sessions"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/users"
 )
+
+const DEFAULT_ENV_NAME = "default.env"
 
 type inMemoryUserStore struct {
 	users []users.User
@@ -53,7 +60,17 @@ func main() {
 		http.NotFound(w, r)
 	})
 
-	const PORT int = 10000
+	currFile := paths.GetCurrFile()
+	currFileDir := filepath.Dir(currFile)
+	defaultEnv, err := godotenv.Read(path.Join(currFileDir, DEFAULT_ENV_NAME))
+	if err != nil {
+		log.Fatalf("Error loading %s file\n", DEFAULT_ENV_NAME)
+	}
+	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		PORT = defaultEnv["DEFAULT_PORT"]
+		log.Printf("PORT not set, defaulting to %q\n", defaultEnv["DEFAULT_PORT"])
+	}
 	log.Printf("Listening on port %v\n", PORT)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", PORT), mux))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", PORT), mux))
 }
