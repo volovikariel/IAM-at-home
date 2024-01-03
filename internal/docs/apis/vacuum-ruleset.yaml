@@ -19,24 +19,24 @@ rules:
         then:
             function: oasComponentDescriptions
         type: validation
-    description-duplication:
-        category:
-            description: Documentation is really important, in OpenAPI, just about everything can and should have a description. This set of rules checks for absent descriptions, poor quality descriptions (copy/paste), or short descriptions.
-            id: descriptions
-            name: Descriptions
-        description: Description duplication check
-        formats:
-            - oas3
-            - oas3_1
-            - oas2
-        given: $
-        howToFix: Descriptions are only useful, if they are meaningful. If a description is meaningful, then it won't be something you copy and paste. Please don't duplicate descriptions, make them deliberate and meaningful.
-        id: description-duplication
-        recommended: true
-        severity: info
-        then:
-            function: oasDescriptionDuplication
-        type: validation
+    # description-duplication:
+    #     category:
+    #         description: Documentation is really important, in OpenAPI, just about everything can and should have a description. This set of rules checks for absent descriptions, poor quality descriptions (copy/paste), or short descriptions.
+    #         id: descriptions
+    #         name: Descriptions
+    #     description: Description duplication check
+    #     formats:
+    #         - oas3
+    #         - oas3_1
+    #         - oas2
+    #     given: $
+    #     howToFix: Descriptions are only useful, if they are meaningful. If a description is meaningful, then it won't be something you copy and paste. Please don't duplicate descriptions, make them deliberate and meaningful.
+    #     id: description-duplication
+    #     recommended: true
+    #     severity: info
+    #     then:
+    #         function: oasDescriptionDuplication
+    #     type: validation
     duplicated-entry-in-enum:
         category:
             description: Schemas are how request bodies and response payloads are defined. They define the data going in and the data flowing out of an operation. These rules check for structural validity, checking types, checking required fields and validating correct use of structures.

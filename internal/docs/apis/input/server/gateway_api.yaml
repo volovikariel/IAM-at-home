@@ -16,7 +16,7 @@ servers:
         default: localhost
         description: Localhost by default for testing.
       port:
-        # TODO: This should reference a config file (which the server's go code should also reference)
+        # If updating, update the default value in .env!
         default: '10000'
         description: The port on which the servers runs, defaults to 10000.
 components:
@@ -24,7 +24,7 @@ components:
     Username:
       description: User's username.
       type: string
-      # TODO: This should reference a config file (which the server's go code should also reference)
+      # If updating min/max, update the default value in .env!
       minLength: 3
       maxLength: 20
       example: foo
@@ -32,10 +32,10 @@ components:
       description: User's password.
       type: string
       format: password
-      # TODO: This should reference a config file (which the server's go code should also reference)
+      # If updating min/max, update the default value in .env!
       minLength: 8
       maxLength: 256
-      example: bar45678
+      example: 'bar45678'
     SessionToken:
       description: User's session-token.
       type: string
@@ -55,7 +55,7 @@ components:
   parameters:
     Username:
       name: username
-      description: '#/components/schemas/Username/description'
+      description: User's username.
       in: path
       required: true
       schema:
@@ -64,7 +64,7 @@ components:
     SessionToken:
         in: header
         name: session-token
-        description: '#/components/schemas/Session-token/description'
+        description: User's session-token.
         required: true
         schema:
           $ref: '#/components/schemas/SessionToken'
@@ -111,6 +111,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UsernameAndPassword'
+            example: {"username": "foo", "password": "bar45678"}
       responses:
         '201':
           description: User created successfully.
@@ -258,6 +259,7 @@ paths:
           text/plain:
             schema:
               $ref: '#/components/schemas/Password'
+            example: 'bar45678'
       responses:
         '201':
           description: Session created successfully.
