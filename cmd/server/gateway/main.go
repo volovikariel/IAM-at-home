@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/joho/godotenv"
+
 	"github.com/volovikariel/IdentityManager/internal/paths"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/sessions"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/users"
