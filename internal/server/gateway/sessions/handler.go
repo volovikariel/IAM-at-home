@@ -11,20 +11,10 @@ import (
 
 type SessionHandler struct {
 	sessionStore SessionStore
-	userStore    users.UserStore // So we can check if users exist
+	userStore    users.UserStore // So we can check if the user exists before creating/terminating their session
 }
 
-func (s *SessionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Println("Endpoint Hit: Sessions")
-	switch r.Method {
-	case http.MethodPost:
-		s.CreateSession(w, r)
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-	}
-}
-
-func NewSessionHandler(sessionStore SessionStore, userStore users.UserStore) *SessionHandler {
+func NewHandler(sessionStore SessionStore, userStore users.UserStore) *SessionHandler {
 	return &SessionHandler{sessionStore: sessionStore, userStore: userStore}
 }
 
@@ -47,4 +37,8 @@ func (s *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	// Token should be some unique value
 	token := "1"
 	w.Write([]byte(fmt.Sprintf("Session created for user %q with token %q", session.Username, token)))
+}
+
+func (s *SessionHandler) TerminateSession(w http.ResponseWriter, r *http.Request) {
+
 }

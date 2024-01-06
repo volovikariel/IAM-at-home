@@ -1,21 +1,44 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"path"
-	"path/filepath"
 
-	"github.com/joho/godotenv"
-
-	"github.com/volovikariel/IdentityManager/internal/paths"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/sessions"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/users"
+	v1 "github.com/volovikariel/IdentityManager/internal/server/gateway/v1"
 )
 
-const DEFAULT_ENV_NAME = "default.env"
+const (
+	DEFAULT_HOST             = "localhost"
+	DEFAULT_PORT             = "10000"
+	DEFAULT_USERNAME_MIN_LEN = 3
+	DEFAULT_USERNAME_MAX_LEN = 20
+	DEFAULT_PASSWORD_MIN_LEN = 8
+	DEFAULT_PASSWORD_MAX_LEN = 256
+)
+
+type ServerConfig struct {
+	Host           string
+	Port           string
+	MinUsernameLen int
+	MaxUsernameLen int
+	MinPasswordLen int
+	MaxPasswordLen int
+}
+
+func NewServerConfig() ServerConfig {
+	return ServerConfig{
+		Host:           DEFAULT_HOST,
+		Port:           DEFAULT_PORT,
+		MinUsernameLen: DEFAULT_USERNAME_MIN_LEN,
+		MaxUsernameLen: DEFAULT_USERNAME_MAX_LEN,
+		MinPasswordLen: DEFAULT_PASSWORD_MIN_LEN,
+		MaxPasswordLen: DEFAULT_PASSWORD_MAX_LEN,
+	}
+}
 
 type inMemoryUserStore struct {
 	users []users.User
@@ -45,33 +68,29 @@ func (i *inMemorySessionStore) Add(username string, token string) error {
 }
 
 func main() {
-	startingUsers := []users.User{}
-	imus := &inMemoryUserStore{users: startingUsers}
-	userHandler := users.NewUserHandler(imus)
+	serverConfig := NewServerConfig()
 
-	startingSessions := []sessions.Session{}
-	imss := &inMemorySessionStore{sessions: startingSessions}
-	sessionHandler := sessions.NewSessionHandler(imss, imus)
+	port := flag.String("p", "", "Port to listen on")
+	host := flag.String("h", "", "Host to listen on")
+	flag.Parse()
+	if port == nil || *port == "" {
+		log.Printf("Port not set, defaulting to %q\n", serverConfig.Port)
+	} else {
+		serverConfig.Port = *port
+	}
+	if host == nil || *host == "" {
+		log.Printf("Host not set, defaulting to %q\n", serverConfig.Host)
+	} else {
+		serverConfig.Host = *host
+	}
 
-	mux := http.NewServeMux()
-	mux.Handle("/v1/users", userHandler)
-	mux.Handle("/v1/users/sessions", sessionHandler)
-	// handle all the other paths by returning a 404 Not Found error
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	v1Handler := v1.NewHandler()
+	http.Handle("/v1/", v1Handler)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	})
 
-	currFile := paths.GetCurrFile()
-	currFileDir := filepath.Dir(currFile)
-	defaultEnv, err := godotenv.Read(path.Join(currFileDir, DEFAULT_ENV_NAME))
-	if err != nil {
-		log.Fatalf("Error loading %s file\n", DEFAULT_ENV_NAME)
-	}
-	PORT := os.Getenv("PORT")
-	if PORT == "" {
-		PORT = defaultEnv["DEFAULT_PORT"]
-		log.Printf("PORT not set, defaulting to %q\n", defaultEnv["DEFAULT_PORT"])
-	}
-	log.Printf("Listening on port %v\n", PORT)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", PORT), mux))
+	serverUrl := fmt.Sprintf("%s:%s", serverConfig.Host, serverConfig.Port)
+	log.Printf("Listening on %s\n", serverUrl)
+	log.Fatal(http.ListenAndServe(serverUrl, nil))
 }

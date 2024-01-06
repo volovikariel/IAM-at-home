@@ -3,25 +3,12 @@ package users
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 )
 
 // TODO: Maybe add "location" in the handler (for future testing)
 type UserHandler struct {
 	Store UserStore
-}
-
-func (u *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Println("Endpoint Hit: Users")
-	switch r.Method {
-	case http.MethodPost:
-		u.CreateUser(w, r)
-		return
-	default:
-		http.Error(w, fmt.Sprintf("Unsupported method: %s", r.Method), http.StatusMethodNotAllowed)
-		return
-	}
 }
 
 func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -43,6 +30,18 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	u.Store.Add(user.Name, user.Password)
 }
 
-func NewUserHandler(store UserStore) *UserHandler {
+func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (u *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (u *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func NewHandler(store UserStore) *UserHandler {
 	return &UserHandler{Store: store}
 }
