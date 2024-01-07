@@ -6,41 +6,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/volovikariel/IdentityManager/internal/server/gateway/sessions"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/users"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/users/sessions"
 	v1 "github.com/volovikariel/IdentityManager/internal/server/gateway/v1"
 )
 
-const (
-	DEFAULT_HOST             = "localhost"
-	DEFAULT_PORT             = "10000"
-	DEFAULT_USERNAME_MIN_LEN = 3
-	DEFAULT_USERNAME_MAX_LEN = 20
-	DEFAULT_PASSWORD_MIN_LEN = 8
-	DEFAULT_PASSWORD_MAX_LEN = 256
-)
-
-type ServerConfig struct {
-	Host           string
-	Port           string
-	MinUsernameLen int
-	MaxUsernameLen int
-	MinPasswordLen int
-	MaxPasswordLen int
-}
-
-func NewServerConfig() ServerConfig {
-	return ServerConfig{
-		Host:           DEFAULT_HOST,
-		Port:           DEFAULT_PORT,
-		MinUsernameLen: DEFAULT_USERNAME_MIN_LEN,
-		MaxUsernameLen: DEFAULT_USERNAME_MAX_LEN,
-		MinPasswordLen: DEFAULT_PASSWORD_MIN_LEN,
-		MaxPasswordLen: DEFAULT_PASSWORD_MAX_LEN,
-	}
-}
-
 type inMemoryUserStore struct {
+	users.UserStore
+
 	users []users.User
 }
 
@@ -59,6 +33,8 @@ func (u *inMemoryUserStore) Get(username string) error {
 }
 
 type inMemorySessionStore struct {
+	sessions.SessionStore
+
 	sessions []sessions.Session
 }
 
@@ -68,8 +44,7 @@ func (i *inMemorySessionStore) Add(username string, token string) error {
 }
 
 func main() {
-	serverConfig := NewServerConfig()
-
+	serverConfig := gateway.ServerConfig
 	port := flag.String("p", "", "Port to listen on")
 	host := flag.String("h", "", "Host to listen on")
 	flag.Parse()
@@ -84,7 +59,7 @@ func main() {
 		serverConfig.Host = *host
 	}
 
-	v1Handler := v1.NewHandler()
+	v1Handler := v1.NewHandler(&inMemoryUserStore{}, &inMemorySessionStore{})
 	http.Handle("/v1/", v1Handler)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)

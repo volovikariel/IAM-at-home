@@ -18,6 +18,7 @@ func NewHandler(sessionStore SessionStore, userStore users.UserStore) *SessionHa
 	return &SessionHandler{sessionStore: sessionStore, userStore: userStore}
 }
 
+// TODO: Update this function
 func (s *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	var session Session
 
@@ -39,6 +40,18 @@ func (s *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(fmt.Sprintf("Session created for user %q with token %q", session.Username, token)))
 }
 
+// TODO: Update this function
 func (s *SessionHandler) TerminateSession(w http.ResponseWriter, r *http.Request) {
 
+}
+
+func (s *SessionHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		s.CreateSession(w, r)
+	case http.MethodDelete:
+		s.TerminateSession(w, r)
+	default:
+		http.Error(w, fmt.Sprintf("Unsupported method: %s for /v1/sessions", r.Method), http.StatusMethodNotAllowed)
+	}
 }
