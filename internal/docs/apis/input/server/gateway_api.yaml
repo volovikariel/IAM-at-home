@@ -92,6 +92,8 @@ components:
         description: Unsupported Media Type.
     UnprocessableEntity:
         description: Unprocessable Entity.
+    NotFound:
+        description: Not Found.
   securitySchemes:
     bearerAuth:
       description: Bearer auth.
@@ -167,8 +169,8 @@ paths:
                         type: string
                         example: '/v1/users/sessions/foo'
               example: {"username": "foo", "rel": {"self": "/v1/users/foo", "session": "/v1/users/sessions/foo"}}
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
     patch:
       summary: Updates a user
