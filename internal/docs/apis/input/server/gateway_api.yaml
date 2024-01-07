@@ -190,10 +190,9 @@ paths:
               type: object
               properties:
                 password:
-                  type: string
-                  format: password
+                  $ref: '#/components/schemas/Password'
                 session-token:
-                  type: string
+                  $ref: '#/components/schemas/SessionToken'
             example: {"password": "bar", "session-token": "foo"}
       responses:
         '200':
