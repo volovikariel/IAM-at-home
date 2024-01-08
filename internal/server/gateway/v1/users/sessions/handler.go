@@ -6,21 +6,21 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/volovikariel/IdentityManager/internal/server/gateway/users"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/models"
 )
 
 type SessionHandler struct {
-	sessionStore SessionStore
-	userStore    users.UserStore // So we can check if the user exists before creating/terminating their session
+	sessionStore models.SessionStore
+	userStore    models.UserStore // So we can check if the user exists before creating/terminating their session
 }
 
-func NewHandler(sessionStore SessionStore, userStore users.UserStore) *SessionHandler {
+func NewHandler(sessionStore models.SessionStore, userStore models.UserStore) *SessionHandler {
 	return &SessionHandler{sessionStore: sessionStore, userStore: userStore}
 }
 
 // TODO: Update this function
 func (s *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
-	var session Session
+	var session models.Session
 
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
@@ -28,7 +28,7 @@ func (s *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Could not parse request body"))
 		return
 	}
-	if err := s.userStore.Get(session.Username); err != nil {
+	if _, err := s.userStore.Get(session.Username); err != nil {
 		http.Error(w, fmt.Sprintf("User %q not found, cannot create session", session.Username), http.StatusNotFound)
 		return
 	}

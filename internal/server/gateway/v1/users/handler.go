@@ -3,47 +3,77 @@ package users
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
 	"github.com/volovikariel/IdentityManager/internal/server/gateway"
-	"github.com/volovikariel/IdentityManager/internal/server/gateway/users/sessions"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/models"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/users/sessions"
 )
 
-// TODO: Maybe add "location" in the handler (for future testing)
 type UserHandler struct {
-	userStore    UserStore
-	sessionStore sessions.SessionStore
+	userStore    models.UserStore
+	sessionStore models.SessionStore
 }
 
 // TODO: Update this function
 func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+	log.Println("POST /v1/users hit")
 	if r.Header.Get("Content-Type") != "application/json" {
-		http.Error(w, "Content-Type header must be set to application/json", http.StatusUnsupportedMediaType)
+		w.WriteHeader(http.StatusUnsupportedMediaType)
 		return
 	}
-	var user User
-	dec := json.NewDecoder(r.Body)
-	dec.DisallowUnknownFields()
-	if err := dec.Decode(&user); err != nil {
-		http.Error(w, "Could not parse request body", http.StatusBadRequest)
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	var user models.User
+	err := decoder.Decode(&user)
+	if err != nil {
+		log.Printf("Could not parse request body: %v\n", err)
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
+	username := user.Name
+	password := user.Password
+
 	serverConfig := gateway.ServerConfig
-	if len(user.Name) < serverConfig.MinUsernameLen || len(user.Name) > serverConfig.MaxUsernameLen {
-		http.Error(w, fmt.Sprintf("Username must be between %d and %d characters long", serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen), http.StatusBadRequest)
+	if err := models.ValidateStringLength(username, "username", serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
+		// Username is too short or too long
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if err := u.userStore.Get(user.Name); err == nil {
-		http.Error(w, fmt.Sprintf("User with name %q already exists", user.Name), http.StatusConflict)
+	if _, err := u.userStore.Get(username); err == nil {
+		// User already exists
+		w.WriteHeader(http.StatusConflict)
 		return
 	}
-	u.userStore.Add(user.Name, user.Password)
+	if err := models.ValidateStringLength(password, "password", serverConfig.MinPasswordLen, serverConfig.MaxPasswordLen); err != nil {
+		// Password is too short or too long
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if err := u.userStore.Add(username, password); err != nil {
+		// Create user failed
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	userResponse := models.UserResponse{
+		Name: username,
+		Rel:  models.Rel{Self: "/v1/users/" + username},
+	}
+	ur, err := json.Marshal(userResponse)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(ur)
 }
 
 func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request, username string) {
 	serverConfig := gateway.ServerConfig
-	if err := ValidateUsernameLength(username, serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
+	if err := models.ValidateStringLength(username, "username", serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -55,10 +85,10 @@ func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request, username s
 		return
 	}
 	// TODO: extract session
-	userResponse := UserSessionResponse{
+	userResponse := models.UserSessionResponse{
 		Name:    username,
 		Session: "",
-		Rel:     rel{Self: "/v1/users/" + username},
+		Rel:     models.Rel{Self: "/v1/users/" + username},
 	}
 	ur, err := json.Marshal(userResponse)
 	if err != nil {
@@ -73,7 +103,7 @@ func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request, username s
 
 func (u *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, username string) {
 	serverConfig := gateway.ServerConfig
-	if err := ValidateUsernameLength(username, serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
+	if err := models.ValidateStringLength(username, "username", serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -108,9 +138,9 @@ func (u *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, usernam
 		return
 	}
 	// TODO: update user's password
-	userResponse := UserResponse{
+	userResponse := models.UserResponse{
 		Name: username,
-		Rel:  rel{Self: "/v1/users/" + username},
+		Rel:  models.Rel{Self: "/v1/users/" + username},
 	}
 	ur, err := json.Marshal(userResponse)
 	if err != nil {
@@ -125,7 +155,7 @@ func (u *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, usernam
 
 func (u *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request, username string) {
 	serverConfig := gateway.ServerConfig
-	if err := ValidateUsernameLength(username, serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
+	if err := models.ValidateStringLength(username, "username", serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -161,8 +191,8 @@ func (u *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request, usernam
 func (u *UserHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	remainingPath := strings.TrimPrefix(r.RequestURI, "/v1/users")
 	pathParameters := strings.Split(remainingPath, "/")
-
-	if len(pathParameters) == 0 {
+	log.Printf("/v1/users hit with full path %q\n", r.RequestURI)
+	if remainingPath == "" {
 		// /v1/users
 		switch r.Method {
 		case http.MethodPost:
@@ -187,11 +217,11 @@ func (u *UserHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	} else if len(pathParameters) == 2 && pathParameters[1] == "sessions" {
 		// /v1/users/sessions/{username}
 		sessions.NewHandler(u.sessionStore, u.userStore).Handle(w, r)
+	} else {
+		http.NotFound(w, r)
 	}
-
-	http.NotFound(w, r)
 }
 
-func NewHandler(userStore UserStore, sessionStore sessions.SessionStore) *UserHandler {
+func NewHandler(userStore models.UserStore, sessionStore models.SessionStore) *UserHandler {
 	return &UserHandler{userStore: userStore, sessionStore: sessionStore}
 }

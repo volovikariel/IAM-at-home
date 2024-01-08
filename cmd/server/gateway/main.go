@@ -7,39 +7,38 @@ import (
 	"net/http"
 
 	"github.com/volovikariel/IdentityManager/internal/server/gateway"
-	"github.com/volovikariel/IdentityManager/internal/server/gateway/users"
-	"github.com/volovikariel/IdentityManager/internal/server/gateway/users/sessions"
 	v1 "github.com/volovikariel/IdentityManager/internal/server/gateway/v1"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/models"
 )
 
 type inMemoryUserStore struct {
-	users.UserStore
+	models.UserStore
 
-	users []users.User
+	users []models.User
 }
 
 func (i *inMemoryUserStore) Add(username string, password string) error {
-	i.users = append(i.users, users.User{Name: username, Password: password})
+	i.users = append(i.users, models.User{Name: username, Password: password})
 	return nil
 }
 
-func (u *inMemoryUserStore) Get(username string) error {
+func (u *inMemoryUserStore) Get(username string) (*models.User, error) {
 	for _, user := range u.users {
 		if user.Name == username {
-			return nil
+			return &user, nil
 		}
 	}
-	return fmt.Errorf("User %q found", username)
+	return nil, fmt.Errorf("User %q not found", username)
 }
 
 type inMemorySessionStore struct {
-	sessions.SessionStore
+	models.SessionStore
 
-	sessions []sessions.Session
+	sessions []models.Session
 }
 
 func (i *inMemorySessionStore) Add(username string, token string) error {
-	i.sessions = append(i.sessions, sessions.Session{Username: username, Token: token})
+	i.sessions = append(i.sessions, models.Session{Username: username, Token: token})
 	return nil
 }
 

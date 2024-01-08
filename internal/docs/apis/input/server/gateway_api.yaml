@@ -75,8 +75,6 @@ components:
         description: Conflict.
     NoContent:
         description: No Content.
-    NotAcceptable:
-        description: Not Acceptable.
     BadRequest:
         description: Bad Request.
     Unauthorized:
@@ -193,7 +191,7 @@ paths:
                   $ref: '#/components/schemas/Password'
                 session-token:
                   $ref: '#/components/schemas/SessionToken'
-            example: {"password": "bar", "session-token": "foo"}
+            example: {"password": "bar123456", "session-token": "foo"}
       responses:
         '200':
           description: User updated successfully.

@@ -1,4 +1,4 @@
-package sessions
+package models
 
 type SessionStore interface {
 	Add(username string, token string) error
