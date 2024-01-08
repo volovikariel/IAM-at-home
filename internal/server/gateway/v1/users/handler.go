@@ -37,9 +37,9 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	password := user.Password
 
 	serverConfig := gateway.ServerConfig
-	if err := models.ValidateStringLength(username, "username", serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
+	if isValid := ValidStringLength(username, serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); !isValid {
 		// Username is too short or too long
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Username is too short or too long", http.StatusBadRequest)
 		return
 	}
 	if _, err := u.userStore.Get(username); err == nil {
@@ -47,9 +47,9 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
-	if err := models.ValidateStringLength(password, "password", serverConfig.MinPasswordLen, serverConfig.MaxPasswordLen); err != nil {
+	if isValid := ValidStringLength(password, serverConfig.MinPasswordLen, serverConfig.MaxPasswordLen); !isValid {
 		// Password is too short or too long
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Password is too short or too long", http.StatusBadRequest)
 		return
 	}
 	if err := u.userStore.Add(username, password); err != nil {
@@ -73,8 +73,8 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request, username string) {
 	serverConfig := gateway.ServerConfig
-	if err := models.ValidateStringLength(username, "username", serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if isValid := ValidStringLength(username, serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); !isValid {
+		http.Error(w, "Username is too short or too long", http.StatusBadRequest)
 		return
 	}
 	// TODO: Check if user exists
@@ -103,8 +103,8 @@ func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request, username s
 
 func (u *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, username string) {
 	serverConfig := gateway.ServerConfig
-	if err := models.ValidateStringLength(username, "username", serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if isValid := ValidStringLength(username, serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); !isValid {
+		http.Error(w, "Username is too short or too long", http.StatusBadRequest)
 		return
 	}
 	// TODO: Check if user exists
@@ -155,8 +155,8 @@ func (u *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, usernam
 
 func (u *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request, username string) {
 	serverConfig := gateway.ServerConfig
-	if err := models.ValidateStringLength(username, "username", serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if isValid := ValidStringLength(username, serverConfig.MinUsernameLen, serverConfig.MaxUsernameLen); !isValid {
+		http.Error(w, "Username is too short or too long", http.StatusBadRequest)
 		return
 	}
 	// TODO: check if the header params contains ONLY the session-token
@@ -224,4 +224,11 @@ func (u *UserHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 func NewHandler(userStore models.UserStore, sessionStore models.SessionStore) *UserHandler {
 	return &UserHandler{userStore: userStore, sessionStore: sessionStore}
+}
+
+func ValidStringLength(str string, minLength int, maxLength int) bool {
+	if len(str) < minLength || len(str) > maxLength {
+		return false
+	}
+	return true
 }
