@@ -10,8 +10,20 @@ import (
 )
 
 type SessionHandler struct {
+	http.Handler
 	sessionStore models.SessionStore
 	userStore    models.UserStore // So we can check if the user exists before creating/terminating their session
+}
+
+func (s *SessionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		s.CreateSession(w, r)
+	case http.MethodDelete:
+		s.TerminateSession(w, r)
+	default:
+		http.Error(w, fmt.Sprintf("Unsupported method: %s for /v1/sessions", r.Method), http.StatusMethodNotAllowed)
+	}
 }
 
 func NewSessionsHandler(sessionStore models.SessionStore, userStore models.UserStore) *SessionHandler {
@@ -43,15 +55,4 @@ func (s *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 // TODO: Update this function
 func (s *SessionHandler) TerminateSession(w http.ResponseWriter, r *http.Request) {
 
-}
-
-func (s *SessionHandler) Handle(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		s.CreateSession(w, r)
-	case http.MethodDelete:
-		s.TerminateSession(w, r)
-	default:
-		http.Error(w, fmt.Sprintf("Unsupported method: %s for /v1/sessions", r.Method), http.StatusMethodNotAllowed)
-	}
 }

@@ -12,13 +12,46 @@ import (
 )
 
 type UserHandler struct {
+	http.Handler
 	userStore    models.UserStore
 	sessionStore models.SessionStore
 }
 
+func (u *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	remainingPath := strings.TrimPrefix(r.RequestURI, "/v1/users")
+	pathParameters := strings.Split(remainingPath, "/")
+	if remainingPath == "" {
+		// /v1/users
+		switch r.Method {
+		case http.MethodPost:
+			u.CreateUser(w, r)
+		default:
+			http.Error(w, fmt.Sprintf("Unsupported method: %s for /v1/users", r.Method), http.StatusMethodNotAllowed)
+		}
+	} else if len(pathParameters) == 1 {
+		// /v1/users/{username}
+		username := pathParameters[0]
+		switch r.Method {
+		case http.MethodGet:
+			u.GetUser(w, r, username)
+		case http.MethodPatch:
+			u.UpdateUser(w, r, username)
+		case http.MethodDelete:
+			u.DeleteUser(w, r, username)
+		default:
+			http.Error(w, fmt.Sprintf("Unsupported method: %s for /v1/users/{username}", r.Method), http.StatusMethodNotAllowed)
+		}
+
+	} else if len(pathParameters) == 2 && pathParameters[1] == "sessions" {
+		// /v1/users/sessions/{username}
+		NewSessionsHandler(u.sessionStore, u.userStore).ServeHTTP(w, r)
+	} else {
+		http.NotFound(w, r)
+	}
+}
+
 // TODO: Update this function
 func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	log.Println("POST /v1/users hit")
 	if r.Header.Get("Content-Type") != "application/json" {
 		w.WriteHeader(http.StatusUnsupportedMediaType)
 		return
@@ -115,11 +148,17 @@ func (u *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, usernam
 		return
 	}
 	// TODO: check if body contains ONLY the password & session
-	containsBoth := true
-	if !containsBoth {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	var updateUserRequest models.UpdateUserRequest
+	err := decoder.Decode(&updateUserRequest)
+	if err != nil {
+		log.Printf("Could not parse request body: %v\n", err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
+	password := updateUserRequest.Password
+	sessionToken := updateUserRequest.Session
 	// If this user account is protected for some reason
 	accountEditable := true
 	if !accountEditable {
@@ -181,40 +220,6 @@ func (u *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request, usernam
 	}
 
 	w.WriteHeader(http.StatusNoContent)
-}
-
-func (u *UserHandler) Handle(w http.ResponseWriter, r *http.Request) {
-	remainingPath := strings.TrimPrefix(r.RequestURI, "/v1/users")
-	pathParameters := strings.Split(remainingPath, "/")
-	log.Printf("/v1/users hit with full path %q\n", r.RequestURI)
-	if remainingPath == "" {
-		// /v1/users
-		switch r.Method {
-		case http.MethodPost:
-			u.CreateUser(w, r)
-		default:
-			http.Error(w, fmt.Sprintf("Unsupported method: %s for /v1/users", r.Method), http.StatusMethodNotAllowed)
-		}
-	} else if len(pathParameters) == 1 {
-		// /v1/users/{username}
-		username := pathParameters[0]
-		switch r.Method {
-		case http.MethodGet:
-			u.GetUser(w, r, username)
-		case http.MethodPatch:
-			u.UpdateUser(w, r, username)
-		case http.MethodDelete:
-			u.DeleteUser(w, r, username)
-		default:
-			http.Error(w, fmt.Sprintf("Unsupported method: %s for /v1/users/{username}", r.Method), http.StatusMethodNotAllowed)
-		}
-
-	} else if len(pathParameters) == 2 && pathParameters[1] == "sessions" {
-		// /v1/users/sessions/{username}
-		NewSessionsHandler(u.sessionStore, u.userStore).Handle(w, r)
-	} else {
-		http.NotFound(w, r)
-	}
 }
 
 func NewUsersHandler(userStore models.UserStore, sessionStore models.SessionStore) *UserHandler {

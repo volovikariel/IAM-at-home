@@ -11,6 +11,11 @@ type UserSessionResponse struct {
 	Rel     Rel    `json:"rel"`
 }
 
+type UpdateUserRequest struct {
+	Password string `json:"password"`
+	Session  string `json:"session"`
+}
+
 type SessionStore interface {
 	// TODO: Patch to update a session, instead of overloading Add to mean refresh?
 	Add(username string, token string) error

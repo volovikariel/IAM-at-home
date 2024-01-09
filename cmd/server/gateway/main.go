@@ -7,6 +7,7 @@ import (
 	v1 "github.com/volovikariel/IdentityManager/internal/server/gateway/v1"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/config"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/handlers"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/middleware"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/models"
 )
 
@@ -21,7 +22,7 @@ func main() {
 	sessionStore := &models.InMemorySessionStore{}
 	v1Handler := handlers.NewV1Handler(memoryStore, sessionStore)
 	mux := http.NewServeMux()
-	mux.Handle("/v1/", v1Handler)
+	mux.Handle("/v1/", middleware.LoggingMiddleware(v1Handler))
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	})
