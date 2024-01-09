@@ -5,12 +5,6 @@ type User struct {
 	Password string `json:"password"`
 }
 
-type UserSessionResponse struct {
-	Name    string `json:"username"`
-	Session string `json:"session"`
-	Rel     Rel    `json:"rel"`
-}
-
 type UserResponse struct {
 	Name string `json:"username"`
 	Rel  Rel    `json:"rel"`
@@ -18,4 +12,11 @@ type UserResponse struct {
 
 type Rel struct {
 	Self string `json:"self"`
+}
+
+type UserStore interface {
+	// Returns an error if user already exists
+	Add(username string, password string) error
+	// Returns an error if user doesn't exist
+	Get(username string) (*User, error)
 }

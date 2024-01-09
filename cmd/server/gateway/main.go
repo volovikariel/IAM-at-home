@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/volovikariel/IdentityManager/internal/server/gateway"
 	v1 "github.com/volovikariel/IdentityManager/internal/server/gateway/v1"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/config"
+	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/handlers"
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/models"
 )
 
@@ -43,28 +43,18 @@ func (i *inMemorySessionStore) Add(username string, token string) error {
 }
 
 func main() {
-	serverConfig := gateway.ServerConfig
-	port := flag.String("p", "", "Port to listen on")
-	host := flag.String("h", "", "Host to listen on")
+	serverConfig := &config.Server{}
+	flag.StringVar(&serverConfig.Port, "p", config.DEFAULT_PORT, "Port to listen on")
+	flag.StringVar(&serverConfig.Host, "h", config.DEFAULT_HOST, "Host to listen on")
 	flag.Parse()
-	if port == nil || *port == "" {
-		log.Printf("Port not set, defaulting to %q\n", serverConfig.Port)
-	} else {
-		serverConfig.Port = *port
-	}
-	if host == nil || *host == "" {
-		log.Printf("Host not set, defaulting to %q\n", serverConfig.Host)
-	} else {
-		serverConfig.Host = *host
-	}
+	server := v1.NewServer(serverConfig)
 
-	v1Handler := v1.NewHandler(&inMemoryUserStore{}, &inMemorySessionStore{})
-	http.Handle("/v1/", v1Handler)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	v1Handler := handlers.NewV1Handler(&inMemoryUserStore{}, &inMemorySessionStore{})
+	mux := http.NewServeMux()
+	mux.Handle("/v1/", v1Handler)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	})
 
-	serverUrl := fmt.Sprintf("%s:%s", serverConfig.Host, serverConfig.Port)
-	log.Printf("Listening on %s\n", serverUrl)
-	log.Fatal(http.ListenAndServe(serverUrl, nil))
+	server.Start(mux)
 }

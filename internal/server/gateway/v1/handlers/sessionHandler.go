@@ -1,4 +1,4 @@
-package sessions
+package handlers
 
 import (
 	"encoding/json"
@@ -14,7 +14,7 @@ type SessionHandler struct {
 	userStore    models.UserStore // So we can check if the user exists before creating/terminating their session
 }
 
-func NewHandler(sessionStore models.SessionStore, userStore models.UserStore) *SessionHandler {
+func NewSessionsHandler(sessionStore models.SessionStore, userStore models.UserStore) *SessionHandler {
 	return &SessionHandler{sessionStore: sessionStore, userStore: userStore}
 }
 

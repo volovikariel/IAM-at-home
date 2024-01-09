@@ -13,11 +13,11 @@ servers:
     description: Gateway API's base URL
     variables:
       host:
-        # If updating, update the default value in cmd/server/gateway/main.go!
+        # If updating, update the default value in the server's config
         default: localhost
         description: Localhost by default for testing.
       port:
-        # If updating, update the default value in cmd/server/gateway/main.go!
+        # If updating, update the default value in the server's config
         default: '10000'
         description: The port on which the servers runs, defaults to 10000.
 components:
@@ -25,7 +25,7 @@ components:
     Username:
       description: User's username.
       type: string
-      # If updating min/max, update the default value in cmd/server/gateway/main.go!
+      # If updating min/max, update the default value in the users config
       minLength: 3
       maxLength: 20
       example: foo
@@ -33,7 +33,7 @@ components:
       description: User's password.
       type: string
       format: password
-      # If updating min/max, update the default value in cmd/server/gateway/main.go!
+      # If updating min/max, update the default value in the users config
       minLength: 8
       maxLength: 256
       example: 'bar45678'
