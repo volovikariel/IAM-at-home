@@ -17,3 +17,14 @@ type SessionStore interface {
 	// Returns an error if session doesn't exist
 	Delete(username string, token string) error
 }
+
+type InMemorySessionStore struct {
+	SessionStore
+
+	sessions []Session
+}
+
+func (i *InMemorySessionStore) Add(username string, token string) error {
+	i.sessions = append(i.sessions, Session{Username: username, Token: token})
+	return nil
+}
