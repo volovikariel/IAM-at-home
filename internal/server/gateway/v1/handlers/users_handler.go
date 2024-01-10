@@ -64,6 +64,11 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
+	// Ensure username & password are present
+	if err := user.Validate(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	username := user.Name
 	password := user.Password
 
@@ -96,7 +101,7 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(ur)
 }
@@ -144,13 +149,18 @@ func (u *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, usernam
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
-	// ensure body body contains ONLY the password & session fields
+	// ensure body contains ONLY the password & session fields
 	decoder.DisallowUnknownFields()
 	var updateUserRequest models.UpdateUserRequest
 	err = decoder.Decode(&updateUserRequest)
 	if err != nil {
 		log.Printf("Could not parse request body: %v\n", err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+	// Ensure that password & session fields are present
+	if err := updateUserRequest.Validate(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// extract password & session (as we'll be updating the user's password)

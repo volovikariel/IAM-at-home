@@ -9,13 +9,19 @@ import (
 	"github.com/volovikariel/IdentityManager/internal/server/gateway/v1/models"
 )
 
+// TODO: Make these explicitely shared (internal/testing?)
+// or perhaps, have a request struct actually used in the code that we can use here
 type mockRequest struct {
-	method string
-	path   string
+	method      string
+	path        string
+	contentType string
+	body        string
 }
 
 type mockResponse struct {
-	status int
+	status      int
+	contentType string
+	body        string
 }
 
 func TestV1HandlerServeHTTP(t *testing.T) {

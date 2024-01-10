@@ -1,10 +1,23 @@
 package models
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type User struct {
 	Name     string `json:"username"`
 	Password string `json:"password"`
+}
+
+func (u *User) Validate() error {
+	if u.Name == "" {
+		return errors.New("username is required")
+	}
+	if u.Password == "" {
+		return errors.New("password is required")
+	}
+	return nil
 }
 
 type UserResponse struct {
@@ -53,4 +66,18 @@ func (i *InMemoryUserStore) Set(username string, password string) error {
 		}
 	}
 	return fmt.Errorf("User %q not found", username)
+}
+
+func (i *InMemoryUserStore) Delete(username string) error {
+	for index, user := range i.users {
+		if user.Name == username {
+			i.users = append(i.users[:index], i.users[index+1:]...)
+			return nil
+		}
+	}
+	return fmt.Errorf("User %q not found", username)
+}
+
+func NewInMemoryUserStore(users []User) *InMemoryUserStore {
+	return &InMemoryUserStore{users: users}
 }

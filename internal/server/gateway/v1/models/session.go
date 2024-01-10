@@ -18,6 +18,16 @@ type UpdateUserRequest struct {
 	Session  string `json:"session"`
 }
 
+func (u *UpdateUserRequest) Validate() error {
+	if u.Password == "" {
+		return fmt.Errorf("Password is required")
+	}
+	if u.Session == "" {
+		return fmt.Errorf("Session is required")
+	}
+	return nil
+}
+
 type SessionStore interface {
 	Get(username string) (*Session, error)
 	// TODO: Patch to update a session, instead of overloading Add to mean refresh?
