@@ -50,7 +50,6 @@ func (u *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// TODO: Update this function
 func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Content-Type") != "application/json" {
 		w.WriteHeader(http.StatusUnsupportedMediaType)
@@ -107,18 +106,15 @@ func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request, username s
 		http.Error(w, "Username is too short or too long", http.StatusBadRequest)
 		return
 	}
-	// TODO: Check if user exists
-	userExists := true
-	if !userExists {
-		// TODO: user doesn't exist
+	_, err := u.userStore.Get(username)
+	if err != nil {
+		// user doesn't exist
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	// TODO: extract session
-	userResponse := models.UserSessionResponse{
-		Name:    username,
-		Session: "",
-		Rel:     models.Rel{Self: "/v1/users/" + username},
+	userResponse := models.UserResponse{
+		Name: username,
+		Rel:  models.Rel{Self: "/v1/users/" + username},
 	}
 	ur, err := json.Marshal(userResponse)
 	if err != nil {
@@ -136,43 +132,49 @@ func (u *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, usernam
 		http.Error(w, "Username is too short or too long", http.StatusBadRequest)
 		return
 	}
-	// TODO: Check if user exists
-	userExists := true
-	if !userExists {
+	_, err := u.userStore.Get(username)
+	if err != nil {
+		// user doesn't exist
+		// TODO: ambiguous whether user is not found or session is not found
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	// TODO: extract password & session (as we'll be updating the user's password)
 	if r.Header.Get("Content-Type") != "application/json" {
 		w.WriteHeader(http.StatusUnsupportedMediaType)
 		return
 	}
-	// TODO: check if body contains ONLY the password & session
 	decoder := json.NewDecoder(r.Body)
+	// ensure body body contains ONLY the password & session fields
 	decoder.DisallowUnknownFields()
 	var updateUserRequest models.UpdateUserRequest
-	err := decoder.Decode(&updateUserRequest)
+	err = decoder.Decode(&updateUserRequest)
 	if err != nil {
 		log.Printf("Could not parse request body: %v\n", err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
+	// extract password & session (as we'll be updating the user's password)
 	password := updateUserRequest.Password
 	sessionToken := updateUserRequest.Session
-	// If this user account is protected for some reason
+	// TODO: Verify that this account is editable by this session token owner
 	accountEditable := true
 	if !accountEditable {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
-	// TODO: verify session is associated with account
-	sessionTokenOk := true
+	session, _ := u.sessionStore.Get(username)
+	// session != nil to verify that the account has a sessiontoken in the first place
+	sessionTokenOk := session != nil && sessionToken == session.Token
 	if !sessionTokenOk {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("WWW_Authenticate: Bearer charset=\"UTF-8\""))
 		return
 	}
-	// TODO: update user's password
+	// update user's password
+	if err := u.userStore.Set(username, password); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	userResponse := models.UserResponse{
 		Name: username,
 		Rel:  models.Rel{Self: "/v1/users/" + username},
@@ -193,29 +195,42 @@ func (u *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request, usernam
 		http.Error(w, "Username is too short or too long", http.StatusBadRequest)
 		return
 	}
-	// TODO: check if the header params contains ONLY the session-token
-	containsBoth := true
-	if !containsBoth {
-		w.WriteHeader(http.StatusUnprocessableEntity)
+	// check if the header params contains ONLY the session-token
+	var sessionToken string
+	for k, v := range r.Header {
+		if k != "session-token" || len(v) != 1 {
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			return
+		} else {
+			sessionToken = v[0]
+		}
+	}
+	// check if user exists
+	_, err := u.userStore.Get(username)
+	if err != nil {
+		// user does not exist
+		// no changes were made
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	// TODO: Check if user exists
-	userExists := true
-	if !userExists {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-	// If this user account is protected for some reason
+	// TODO: Verify that this account is editable by this session token owner
 	accountEditable := true
 	if !accountEditable {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
-	// TODO: verify session is associated with account
-	sessionTokenOk := true
+	session, _ := u.sessionStore.Get(username)
+	// session != nil to verify that the account has a sessiontoken in the first place
+	sessionTokenOk := session != nil && sessionToken == session.Token
 	if !sessionTokenOk {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("WWW_Authenticate: Bearer charset=\"UTF-8\""))
+		return
+	}
+
+	// delete user
+	if err := u.userStore.Delete(username); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

@@ -1,5 +1,7 @@
 package models
 
+import "fmt"
+
 type Session struct {
 	Username string `json:"username"`
 	Token    string `json:"token"`
@@ -17,6 +19,7 @@ type UpdateUserRequest struct {
 }
 
 type SessionStore interface {
+	Get(username string) (*Session, error)
 	// TODO: Patch to update a session, instead of overloading Add to mean refresh?
 	Add(username string, token string) error
 	// Returns an error if session doesn't exist
@@ -32,4 +35,23 @@ type InMemorySessionStore struct {
 func (i *InMemorySessionStore) Add(username string, token string) error {
 	i.sessions = append(i.sessions, Session{Username: username, Token: token})
 	return nil
+}
+
+func (i *InMemorySessionStore) Get(username string) (*Session, error) {
+	for _, session := range i.sessions {
+		if session.Username == username {
+			return &session, nil
+		}
+	}
+	return nil, fmt.Errorf("Session %q not found", username)
+}
+
+func (i *InMemorySessionStore) Delete(username string, token string) error {
+	for sessionIdx, session := range i.sessions {
+		if session.Username == username && session.Token == token {
+			i.sessions = append(i.sessions[:sessionIdx], i.sessions[sessionIdx+1:]...)
+			return nil
+		}
+	}
+	return fmt.Errorf("Session %q not found", username)
 }

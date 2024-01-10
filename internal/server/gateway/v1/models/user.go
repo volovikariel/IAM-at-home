@@ -21,6 +21,8 @@ type UserStore interface {
 	Add(username string, password string) error
 	// Returns an error if user doesn't exist
 	Get(username string) (*User, error)
+	Set(username string, password string) error
+	Delete(username string) error
 }
 
 type InMemoryUserStore struct {
@@ -41,4 +43,14 @@ func (u *InMemoryUserStore) Get(username string) (*User, error) {
 		}
 	}
 	return nil, fmt.Errorf("User %q not found", username)
+}
+
+func (i *InMemoryUserStore) Set(username string, password string) error {
+	for _, user := range i.users {
+		if user.Name == username {
+			user.Password = password
+			return nil
+		}
+	}
+	return fmt.Errorf("User %q not found", username)
 }
