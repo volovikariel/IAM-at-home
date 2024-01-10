@@ -18,7 +18,7 @@ type UserHandler struct {
 }
 
 func (u *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	remainingPath := strings.TrimPrefix(r.RequestURI, "/v1/users")
+	remainingPath := strings.TrimPrefix(r.URL.Path, "/v1/users")
 	pathParameters := strings.Split(remainingPath, "/")
 	if remainingPath == "" {
 		// /v1/users

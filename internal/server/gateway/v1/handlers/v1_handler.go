@@ -20,7 +20,7 @@ func NewV1Handler(userStore models.UserStore, sessionStore models.SessionStore) 
 }
 
 func (h v1Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	remainingPath := strings.TrimPrefix(r.RequestURI, "/v1/")
+	remainingPath := strings.TrimPrefix(r.URL.Path, "/v1/")
 	pathParameters := strings.Split(remainingPath, "/")
 
 	if len(pathParameters) >= 1 && pathParameters[0] == "users" {
