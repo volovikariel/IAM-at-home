@@ -55,7 +55,9 @@ func TestGetInputPaths(t *testing.T) {
 		},
 	}
 	for _, tc := range testCases {
+		tc := tc // Prevent race condition given parallel test
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			got := GetInputPaths(infs, ".d2", tc.recurse)
 			if !reflect.DeepEqual(tc.expected, got) {
 				t.Errorf("\nWant:\n%q\nGot:\n%q\n", tc.expected, got)
