@@ -8,7 +8,7 @@ name: Go
 
 on:
   push:
-    branches: [ "main", "test/dockerize-an-api" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
