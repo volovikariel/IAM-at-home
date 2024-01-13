@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"net/http"
 
 	v1 "github.com/volovikariel/IdentityManager/internal/server/gateway/v1"
@@ -17,7 +16,6 @@ func main() {
 	flag.StringVar(&serverConfig.Host, "h", config.DEFAULT_HOST, "Host to listen on")
 	flag.StringVar(&serverConfig.Port, "p", config.DEFAULT_PORT, "Port to listen on")
 	flag.Parse()
-	fmt.Println(serverConfig.Host)
 	server := v1.NewServer(serverConfig)
 
 	memoryStore := &models.InMemoryUserStore{}
