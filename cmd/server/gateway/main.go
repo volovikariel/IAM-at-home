@@ -13,8 +13,8 @@ import (
 
 func main() {
 	serverConfig := &config.Server{}
-	flag.StringVar(&serverConfig.Port, "p", config.DEFAULT_PORT, "Port to listen on")
 	flag.StringVar(&serverConfig.Host, "h", config.DEFAULT_HOST, "Host to listen on")
+	flag.StringVar(&serverConfig.Port, "p", config.DEFAULT_PORT, "Port to listen on")
 	flag.Parse()
 	server := v1.NewServer(serverConfig)
 
