@@ -11,6 +11,7 @@ Run the image: `HOST_NAME='' HOST_PORT=10000 CONTAINER_PORT=8080; docker run -d 
 You should now be able to access the Gateway API Server at: `http://localhost:HOST_PORT` (e.g: `curl localhost:10000`)
 
 Stop the container: `docker stop gateway-api`
+
 Remove the container: `docker rm gateway-api`
 
 # APIs
