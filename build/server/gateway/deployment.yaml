@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-api
+  template:
+    metadata:
+      labels:
+        app: gateway-api
+    spec:
+      containers:
+      - name: gateway-api
+        image: gateway-api:latest
+        # We are using a local image
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 10000
+          name: gateway-api
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        args: ["-h", "", "-p", "10000"]
