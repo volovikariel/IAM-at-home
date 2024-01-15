@@ -2,35 +2,72 @@
 
 # Running the standalone parts (Docker)
 ## Gateway API Server
-Build the image: `docker build -f build/server/gateway/Dockerfile -t gateway-api .`
+Build the image: 
+```
+docker build -f build/server/gateway/Dockerfile -t gateway-api .
+```
 
-Run the image: `HOST_NAME='' HOST_PORT=10000 CONTAINER_PORT=8080; docker run -d --expose "$CONTAINER_PORT" -p "$HOST_PORT:$CONTAINER_PORT" --name gateway-api gateway-api:latest -h "$HOST_NAME" -p "$CONTAINER_PORT"`
+Run the image:
+```
+HOST_NAME='' HOST_PORT=10000 CONTAINER_PORT=8080; \
+docker run -d \
+--expose "$CONTAINER_PORT" \
+-p "$HOST_PORT:$CONTAINER_PORT" \
+--name gateway-api \
+gateway-api:latest \
+-h "$HOST_NAME" \
+-p "$CONTAINER_PORT"
+```
 
 **Note**: You can specify the host name, host port, and container ports in the `docker run` command.
 
 You should now be able to access the Gateway API Server at: `http://localhost:HOST_PORT` (e.g: `curl localhost:10000`)
 
-Stop the container: `docker stop gateway-api`
+Stop the container:
+```
+docker stop gateway-api
+```
 
-Remove the container: `docker rm gateway-api`
+Remove the container:
+```
+docker rm gateway-api
+```
 
 # Running the individual parts (Kubernetes)
 ## Gateway API Server
 Build its Docker image.
 
-Create a Kubernetes cluster: `minikube start`
+Create a Kubernetes cluster:
+```
+minikube start
+```
 
-Create the Gateway API Server Deployment: `kubectl apply -f ./build/server/gateway/deployment.yaml`
+Create the Gateway API Server Deployment:
+```
+kubectl apply -f ./build/server/gateway/deployment.yaml
+```
 
-Create the Gateway API Server Service: `kubectl apply -f ./build/server/gateway/service.yaml`
+Create the Gateway API Server Service:
+```
+kubectl apply -f ./build/server/gateway/service.yaml
+```
 
-**Note**: You should now be able to access the Gateway API Server at: `http://$(minikube ip):30000`
+**Note**: You should now be able to access the Gateway API Server at `http://$(minikube ip):30000` (e.g: `curl http://$(minikube ip):30000`)
 
-Delete the service: `kubectl delete service gateway-api-service`
+Delete the service:
+```
+kubectl delete service gateway-api-service
+```
 
-Delete the deployment: `kubectl delete deployment gateway-api-deployment`
+Delete the deployment:
+```
+kubectl delete deployment gateway-api-deployment
+```
 
-Delete the cluster: `minikube delete`
+Delete the cluster:
+```
+minikube delete
+```
 
 # APIs
 ## Gateway API Server
