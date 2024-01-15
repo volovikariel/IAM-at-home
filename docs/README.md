@@ -21,7 +21,7 @@ gateway-api:latest \
 
 **Note**: You can specify the host name, host port, and container ports in the `docker run` command.
 
-You should now be able to access the Gateway API Server at: `http://localhost:HOST_PORT` (e.g: `curl localhost:10000`)
+You should now be able to access the Gateway API Server at: `http://localhost:$HOST_PORT` (e.g: `curl localhost:$HOST_PORT`, or `curl localhost:10000`)
 
 Stop the container:
 ```bash
