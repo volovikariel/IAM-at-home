@@ -76,7 +76,8 @@ minikube delete
 
 To scale the number of replicas after having deployed the Gateway API Server:
 ```bash
-REPLICAS=2; kubectl scale -f ./build/server/gateway/deployment.yaml --replicas=$REPLICAS
+REPLICAS=2; \
+kubectl scale -f ./build/server/gateway/deployment.yaml --replicas=$REPLICAS
 ```
 
 Alternatively, you can modify the `replicas` field in the `deployment.yaml` file, then run:
