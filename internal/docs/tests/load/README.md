@@ -41,14 +41,17 @@ export function getPath() {
 
 Which can then be run with the following
 ```bash
-NUM_REPLICAS=$(kubectl get deployments gateway-api-deployment -o jsonpath='{.spec.replicas}'); \
+NUM_REPLICAS=$(kubectl get deployments gateway-api-deployment -o jsonpath='{.spec.replicas}') \
+PORT=$(kubectl get service gateway-api-service -o=jsonpath='{.spec.ports[0].nodePort}') \
 HOST=$(minikube ip) \
-PORT=30000 \
+; \
+HOST=${HOST} \
+PORT=${PORT} \
 k6 run \
 --out web-dashboard=export="docs/tests/load/gateway/${NUM_REPLICAS}_replicas_report.html" \
 internal/docs/tests/load/gateway_api.js
 ```
 
-**NOTE**: The `HOST` and `PORT` can be edited to match your environment.
+**NOTE**: The `HOST` and `PORT` after the `;` can be edited to match your environment.
 
 **NOTE**: To use `--out web-dashboard` you need to have Grafana Xk6 Dashboard installed, see [here](https://github.com/grafana/xk6-dashboard).
