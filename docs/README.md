@@ -57,7 +57,11 @@ Create the Gateway API Server Service:
 kubectl apply -f ./build/server/gateway/service.yaml
 ```
 
-**Note**: You should now be able to access the Gateway API Server at `http://$(minikube ip):30000` (e.g: `curl http://$(minikube ip):30000`)
+**Note**: You should now be able to access the Gateway API Server, as a test you can run:
+```bash
+PORT=$(kubectl get service gateway-api-service -o=jsonpath='{.spec.ports[0].nodePort}');
+curl http://$(minikube ip):$PORT
+```
 
 To scale the number of replicas after having deployed the Gateway API Server:
 ```bash
@@ -84,6 +88,17 @@ Delete the cluster:
 ```bash
 minikube delete
 ```
+
+# Load tests
+Instructions on how to run load tests [here](/internal/docs/tests/load/README.md).
+
+Here are some example load test reports for the Gateway API Server:
+
+![1 replica](https://volovikariel.github.io/IdentityManager/docs/tests/load/gateway/1_replicas_report.html)
+
+![2 replicas](https://volovikariel.github.io/IdentityManager/docs/tests/load/gateway/2_replicas_report.html)
+
+![6 replicas](https://volovikariel.github.io/IdentityManager/docs/tests/load/gateway/6_replicas_report.html)
 
 # APIs
 ## Gateway API Server
