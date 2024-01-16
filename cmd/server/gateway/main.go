@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"net/http"
 
 	v1 "github.com/volovikariel/IdentityManager/internal/server/gateway/v1"
@@ -24,6 +25,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/v1/", middleware.LoggingMiddleware(v1Handler))
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("INFO: endpoint %s not found; hit by %s", r.URL.Path, r.RemoteAddr)
 		http.NotFound(w, r)
 	})
 
