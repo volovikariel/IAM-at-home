@@ -57,7 +57,11 @@ Create the Gateway API Server Service:
 kubectl apply -f ./build/server/gateway/service.yaml
 ```
 
-**Note**: You should now be able to access the Gateway API Server at `http://$(minikube ip):30000` (e.g: `curl http://$(minikube ip):30000`)
+**Note**: You should now be able to access the Gateway API Server, as a test you can run:
+```bash
+PORT=$(kubectl get service gateway-api-service -o=jsonpath='{.spec.ports[0].nodePort}');
+curl http://$(minikube ip):$PORT
+```
 
 To scale the number of replicas after having deployed the Gateway API Server:
 ```bash
