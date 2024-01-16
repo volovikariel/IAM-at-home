@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func LoggingMiddleware(next http.Handler) http.Handler {
+func LoggingMiddleware(next http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		log.Printf("INFO: Received %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
