@@ -85,6 +85,17 @@ Delete the cluster:
 minikube delete
 ```
 
+# Load tests
+Instructions on how to run load tests [here](/internal/docs/tests/load/README.md).
+
+Here are some example load test reports for the Gateway API Server:
+
+![1 replica](https://volovikariel.github.io/IdentityManager/docs/tests/load/gateway/1_replicas_report.html)
+
+![2 replicas](https://volovikariel.github.io/IdentityManager/docs/tests/load/gateway/2_replicas_report.html)
+
+![6 replicas](https://volovikariel.github.io/IdentityManager/docs/tests/load/gateway/6_replicas_report.html)
+
 # APIs
 ## Gateway API Server
 [Docs](https://volovikariel.github.io/IdentityManager/apis/server/gateway_api.html)
