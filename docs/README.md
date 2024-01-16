@@ -40,7 +40,7 @@ eval $(minikube docker-env)
 ```
 
 ## Gateway API Server
-Build its Docker image.
+Build its Docker image (see steps above).
 
 Create a Kubernetes cluster:
 ```bash
