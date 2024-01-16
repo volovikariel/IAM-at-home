@@ -34,6 +34,11 @@ docker rm gateway-api
 ```
 
 # Running the individual parts (Kubernetes)
+As we'll be using a local image and deploying it to a Kubernetes cluster, do the following before building the docker image:
+```bash
+eval $(minikube docker-env)
+```
+
 ## Gateway API Server
 Build its Docker image.
 
@@ -67,6 +72,16 @@ kubectl delete deployment gateway-api-deployment
 Delete the cluster:
 ```bash
 minikube delete
+```
+
+To scale the number of replicas after having deployed the Gateway API Server:
+```bash
+REPLICAS=2; kubectl scale -f ./build/server/gateway/deployment.yaml --replicas=$REPLICAS
+```
+
+Alternatively, you can modify the `replicas` field in the `deployment.yaml` file, then run:
+```bash 
+kubectl apply -f ./build/server/gateway/deployment.yaml
 ```
 
 # APIs
