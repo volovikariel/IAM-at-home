@@ -59,6 +59,17 @@ kubectl apply -f ./build/server/gateway/service.yaml
 
 **Note**: You should now be able to access the Gateway API Server at `http://$(minikube ip):30000` (e.g: `curl http://$(minikube ip):30000`)
 
+To scale the number of replicas after having deployed the Gateway API Server:
+```bash
+REPLICAS=2; \
+kubectl scale -f ./build/server/gateway/deployment.yaml --replicas=$REPLICAS
+```
+
+Alternatively, you can modify the `replicas` field in the `deployment.yaml` file, then run:
+```bash 
+kubectl apply -f ./build/server/gateway/deployment.yaml
+```
+
 Delete the service:
 ```bash
 kubectl delete service gateway-api-service
@@ -72,17 +83,6 @@ kubectl delete deployment gateway-api-deployment
 Delete the cluster:
 ```bash
 minikube delete
-```
-
-To scale the number of replicas after having deployed the Gateway API Server:
-```bash
-REPLICAS=2; \
-kubectl scale -f ./build/server/gateway/deployment.yaml --replicas=$REPLICAS
-```
-
-Alternatively, you can modify the `replicas` field in the `deployment.yaml` file, then run:
-```bash 
-kubectl apply -f ./build/server/gateway/deployment.yaml
 ```
 
 # APIs
