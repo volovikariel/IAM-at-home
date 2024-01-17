@@ -92,13 +92,13 @@ minikube delete
 # Load tests
 Instructions on how to run load tests [here](/internal/docs/tests/load/README.md).
 
-Here are some example load test reports for the Gateway API Server:
+Gateway API Server ([load test scenario](https://github.com/volovikariel/IdentityManager/blob/d87ba775da37ad427be70f47c55d64df7268eaaf/internal/docs/tests/load/gateway_api.js)):
 
-[1 replica](https://volovikariel.github.io/IdentityManager/tests/load/gateway/1_replicas_report.html)
+[📈1 replica📈](https://volovikariel.github.io/IdentityManager/tests/load/gateway/1_replicas_report.html)
 
-[2 replicas](https://volovikariel.github.io/IdentityManager/tests/load/gateway/2_replicas_report.html)
+[📈2 replicas📈](https://volovikariel.github.io/IdentityManager/tests/load/gateway/2_replicas_report.html)
 
-[6 replicas](https://volovikariel.github.io/IdentityManager/tests/load/gateway/6_replicas_report.html)
+[📈6 replicas📈](https://volovikariel.github.io/IdentityManager/tests/load/gateway/6_replicas_report.html)
 
 # APIs
 ## Gateway API Server
