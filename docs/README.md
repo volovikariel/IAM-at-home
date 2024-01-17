@@ -59,7 +59,7 @@ kubectl apply -f ./build/server/gateway/service.yaml
 
 **Note**: You should now be able to access the Gateway API Server, as a test you can run:
 ```bash
-PORT=$(kubectl get service gateway-api-service -o=jsonpath='{.spec.ports[0].nodePort}');
+PORT=$(kubectl get service gateway-api-service -o=jsonpath='{.spec.ports[0].nodePort}'); \
 curl http://$(minikube ip):$PORT
 ```
 
