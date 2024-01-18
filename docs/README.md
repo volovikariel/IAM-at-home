@@ -18,7 +18,8 @@
 # Running individual components
 
 <a name="running-individual-components-prerequisites"/></a>
-## Prerequisites: Docker
+## Prerequisites
+1. [Docker](https://docs.docker.com/engine/install/)
 
 <a name="running-individual-components-gateway-api-server"/></a>
 ## Gateway API Server
@@ -57,9 +58,11 @@ docker rm gateway-api
 # Running component clusters
 <a name="running-component-clusters-prerequisites"/></a>
 ## Prerequisites
-1. Docker installed (to build the image).
-1. Minikube installed (to run a Kubernetes cluster on your machine).
-1. Kubectl installed (to manage your cluster's deployments, services, etc.); alternatively - you can run the following and use Minikube's built in Kubectl: `alias kubectl="minikube kubectl --"`
+1. [Docker](https://docs.docker.com/engine/install/) installed (to build the image).
+1. [Minikube](https://minikube.sigs.k8s.io/docs/start/) installed (to run a Kubernetes cluster on your machine).
+1. [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) installed (to manage your cluster)
+
+   Alternatively - you can run the following and use Minikube's built in Kubectl: `alias kubectl="minikube kubectl --"`
 
 As we're using local images in our clusters, do the following before building the images:
 ```bash
