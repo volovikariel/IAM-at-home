@@ -100,6 +100,11 @@ Gateway API Server ([load test scenario](https://github.com/volovikariel/Identit
 
 [📈6 replicas📈](https://volovikariel.github.io/IdentityManager/tests/load/gateway/6_replicas_report.html)
 
+**Note**: Better tests are planned once the application is completed:
+- Breakpoint testing: Very slowly scaling up #VUs (to ensure that your SLOs are met)
+- Stress testing: Higher than expected average load for a medium length of time (see whether the system scales to adjust to it properly)
+- Spike testing: Insane load for a very short amount of time (see whether the system recovers gracefully from any failures that may occur)
+
 # APIs
 ## Gateway API Server
 [Docs](https://volovikariel.github.io/IdentityManager/apis/server/gateway_api.html)
