@@ -11,7 +11,7 @@
    1. [Gateway API Server](#load-testing-gateway-api-server)
 1. [Documentation](#documentation)
    1. [API](#documentation-api)
-      1. [Gateway API Docs](#documentation-api-gateway-api-server)
+      1. [Gateway API Server](#documentation-api-gateway-api-server)
    1. [Architecture diagrams](#documentation-architecture-diagrams)
    
 <a name="running-individual-components"></a>
