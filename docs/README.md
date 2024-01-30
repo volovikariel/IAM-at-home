@@ -156,7 +156,7 @@ Instructions on how to run load tests [here](/internal/docs/tests/load/README.md
 <a name="documentation-api-gateway-api-server"/></a>
 ### Gateway API Server
 [Docs](https://volovikariel.github.io/IdentityManager/apis/server/gateway_api.html)
-![Preview](https://github.com/volovikariel/IdentityManager/assets/16262535/cfe9200f-9423-4282-ad98-fcdf1bb4bd74)
+[<img src="https://github.com/volovikariel/IdentityManager/assets/16262535/cfe9200f-9423-4282-ad98-fcdf1bb4bd74">](https://volovikariel.github.io/IdentityManager/apis/server/gateway_api.html)
 
 
 <a name="documentation-architecture-diagrams"/></a>
