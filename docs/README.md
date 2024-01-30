@@ -134,10 +134,15 @@ Instructions on how to run load tests [here](/internal/docs/tests/load/README.md
 [Load test scenarios](https://github.com/volovikariel/IdentityManager/blob/d87ba775da37ad427be70f47c55d64df7268eaaf/internal/docs/tests/load/gateway_api.js):
 
 [📈1 replica📈](https://volovikariel.github.io/IdentityManager/tests/load/gateway/1_replicas_report.html)
+[<img src="https://github.com/volovikariel/IdentityManager/assets/16262535/93e90cf5-57ca-4012-934c-cf681f2e9357">](https://volovikariel.github.io/IdentityManager/tests/load/gateway/1_replicas_report.html)
+
 
 [📈2 replicas📈](https://volovikariel.github.io/IdentityManager/tests/load/gateway/2_replicas_report.html)
+[<img src="https://github.com/volovikariel/IdentityManager/assets/16262535/0a433618-6cac-4a13-b8e9-9792594a3118">](https://volovikariel.github.io/IdentityManager/tests/load/gateway/2_replicas_report.html)
+
 
 [📈6 replicas📈](https://volovikariel.github.io/IdentityManager/tests/load/gateway/6_replicas_report.html)
+[<img src="https://github.com/volovikariel/IdentityManager/assets/16262535/bfefeff9-60fe-48ce-801b-512abedfdd24">](https://volovikariel.github.io/IdentityManager/tests/load/gateway/6_replicas_report.html)
 
 **Note**: Better tests are planned once the application is completed:
 - Breakpoint testing: Very slowly scaling up #VUs (to ensure that your SLOs are met)
@@ -151,6 +156,8 @@ Instructions on how to run load tests [here](/internal/docs/tests/load/README.md
 <a name="documentation-api-gateway-api-server"/></a>
 ### Gateway API Server
 [Docs](https://volovikariel.github.io/IdentityManager/apis/server/gateway_api.html)
+![Preview](https://github.com/volovikariel/IdentityManager/assets/16262535/cfe9200f-9423-4282-ad98-fcdf1bb4bd74)
+
 
 <a name="documentation-architecture-diagrams"/></a>
 ## Diagrams
