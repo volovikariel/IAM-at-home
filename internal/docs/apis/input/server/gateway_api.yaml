@@ -123,13 +123,15 @@ paths:
                 properties:
                   username:
                     type: string
+                    example: foo
                   rel:
                     type: object
                     properties:
                       self:
                         type: string
                         example: '/v1/users/foo'
-              example: {"username": "foo", "rel": {"self": "/v1/users/foo"}}
+                    example: {"self": "/v1/users/foo"}
+                example: {"username": "foo", "rel": {"self": "/v1/users/foo"}}
         '400':
           $ref: '#/components/responses/BadRequest' 
         '409':
@@ -157,6 +159,7 @@ paths:
                 properties:
                   username:
                     type: string
+                    example: foo
                   rel:
                     type: object
                     properties:
@@ -166,7 +169,8 @@ paths:
                       session:
                         type: string
                         example: '/v1/users/sessions/foo'
-              example: {"username": "foo", "rel": {"self": "/v1/users/foo", "session": "/v1/users/sessions/foo"}}
+                    example: {"self": "/v1/users/foo", "session": "/v1/users/sessions/foo"}
+                example: {"username": "foo", "rel": {"self": "/v1/users/foo", "session": "/v1/users/sessions/foo"}}
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -191,7 +195,7 @@ paths:
                   $ref: '#/components/schemas/Password'
                 session-token:
                   $ref: '#/components/schemas/SessionToken'
-            example: {"password": "bar123456", "session-token": "foo"}
+              example: {"password": "bar123456", "session-token": "foo"}
       responses:
         '200':
           description: User updated successfully.
@@ -202,13 +206,15 @@ paths:
                 properties:
                   username:
                     type: string
+                    example: foo
                   rel:
                     type: object
                     properties:
                       self:
                         type: string
                         example: '/v1/users/foo'
-              example: {"username": "foo", "rel": {"self": "/v1/users/foo"}}
+                    example: {"self": "/v1/users/foo"}
+                example: {"username": "foo", "rel": {"self": "/v1/users/foo"}}
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -272,13 +278,15 @@ paths:
                 properties:
                   session-token:
                     type: string
+                    example: abcd1234
                   rel:
                     type: object
                     properties:
                       self:
                         type: string
                         example: '/v1/users/sessions/username'
-              example: {"session-token": "abcd1234", "rel": {"self": "/v1/users/sessions/username"}}
+                    example: {"rel": {"self": "/v1/users/sessions/username"}}
+                example: {"session-token": "abcd1234", "rel": {"self": "/v1/users/sessions/username"}}
     
     delete:
       summary: Terminates session
