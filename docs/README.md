@@ -160,7 +160,7 @@ Instructions on how to run load tests [here](/internal/docs/tests/load/README.md
 
 
 <a name="documentation-architecture-diagrams"/></a>
-## Diagrams
+## Diagrams (⚠️ changing soon ⚠️)
 ### Interactions
 ![User interactions](diagrams/user_interactions.svg)
 ![Admin interactions](diagrams/admin_interactions.svg)
