@@ -101,7 +101,6 @@ Create the Gateway API Server Deployment:
 kubectl apply -f ./build/server/gateway/deployment.yaml
 ```
 
-<a id="intro" name="intro"></a>
 Create the Gateway API Server Service:
 ```bash
 kubectl apply -f ./build/server/gateway/service.yaml
