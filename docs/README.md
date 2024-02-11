@@ -1,6 +1,7 @@
 ![Workflow Badge](https://github.com/volovikariel/IAM-at-home/actions/workflows/go.yml/badge.svg)
 
 # Table of contents
+1. [Introduction](#intro)
 1. [Running individual components](#running-individual-components)
    1. [Prerequisites](#running-individual-components-prerequisites)
    1. [Gateway API Server](#running-individual-components-gateway-api-server)
@@ -13,7 +14,20 @@
    1. [API](#documentation-api)
       1. [Gateway API Server](#documentation-api-gateway-api-server)
    1. [Architecture diagrams](#documentation-architecture-diagrams)
-   
+
+<a name="intro"></a>
+# Introduction
+## What is it?
+This project is a homegrown IAM (Identity and Access Management) system.
+
+It aims to be easy to set up, fault tolerant, highly available, and scalable.
+
+## Intended users
+The intended users of IAM@home are people who have personal projects that would require IAM, but that do not want to opt for a cloud solution.
+
+## Reason to exist
+I'm building this project for the sake of learning, and there will most likely be many iterations!
+
 <a name="running-individual-components"></a>
 # Running individual components
 
